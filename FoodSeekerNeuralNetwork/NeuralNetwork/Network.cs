@@ -9,9 +9,10 @@ namespace NeuralNetwork
         public int HiddenNodes { get; set; }
         public int OutputNodes { get; set; }
         public float LearningRate { get; set; }
-        public Matrix WeightInput_hidden { get; set; }
-        public Matrix WeighHidden_output { get; set; }
-        public Matrix Hidden_Outputs { get; set; }
+
+        private Layer InputLayer { get; set; }
+        private Layer HiddenLayer { get; set; }
+        private Layer OutputLayer { get; set; }
 
         public void InitializeNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate)
         {
@@ -19,62 +20,67 @@ namespace NeuralNetwork
             HiddenNodes = hiddenNodes;
             OutputNodes = outputNodes;
             LearningRate = learningRate;
-            Hidden_Outputs = new Matrix(HiddenNodes, 1);
+            InputLayer = new Layer();
+            HiddenLayer = new Layer();
+            OutputLayer = new Layer();
 
-            WeightInput_hidden = new Matrix(HiddenNodes, InputNodes);
-            WeightInput_hidden.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5));
-            //WeightInput_hidden.GenerateRandomValuesBetween(-0.9, 0.9);
-            WeighHidden_output = new Matrix(OutputNodes, HiddenNodes);
-            WeighHidden_output.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
-            //Weightidden_output.GenerateRandomValuesBetween(-0.9, 0.9);
+            InputLayer.Weights = new Matrix(HiddenNodes, InputNodes);
+            InputLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5));
+            HiddenLayer.Weights = new Matrix(OutputNodes, HiddenNodes);
+            HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
         }
 
         public void TrainNetwrok(Matrix inputs, Matrix target)
         {
-            Matrix final_outputs = QueryNetwrok(inputs);
-            Matrix output_errors = target - final_outputs;
-            Matrix hidden_errors = WeighHidden_output.Transpose() * output_errors;
-            Matrix Hidden_Outputs_Transpose = Hidden_Outputs.Transpose();
+            OutputLayer.Output = QueryNetwrok(inputs);
+            OutputLayer.Errors = target - OutputLayer.Output;
+            HiddenLayer.Errors = HiddenLayer.Weights.Transpose() * OutputLayer.Errors;
+            Matrix HiddenLayer_Output_Transpose = InputLayer.Output.Transpose();
             Matrix inputs_Transpose = inputs.Transpose();
 
-            for (int i = 0; i < output_errors.Lines; i++)
+            for (int i = 0; i < OutputLayer.Errors.Lines; i++)
             {
-                double change = (output_errors.TheMatrix[i, 0] * final_outputs.TheMatrix[i, 0] * (1.0 - final_outputs.TheMatrix[i, 0]));
-                WeighHidden_output.AddToLine(LearningRate * (change * Hidden_Outputs_Transpose), i);
+                double change = (OutputLayer.Errors.TheMatrix[i, 0] * OutputLayer.Output.TheMatrix[i, 0] * (1.0 - OutputLayer.Output.TheMatrix[i, 0]));
+                HiddenLayer.Weights.AddToLine(LearningRate * (change * HiddenLayer_Output_Transpose), i);
             }
-            //WeighHidden_output += LearningRate * ((output_errors * final_outputs * (1.0 - final_outputs)) * Hidden_Outputs.Transpose());
 
-            for (int i = 0; i < hidden_errors.Lines; i++)
+            for (int i = 0; i < HiddenLayer.Errors.Lines; i++)
             {
-                double change = (hidden_errors.TheMatrix[i, 0] * Hidden_Outputs.TheMatrix[i, 0] * (1.0 - Hidden_Outputs.TheMatrix[i, 0]));
-                WeightInput_hidden.AddToLine(LearningRate * (change * inputs_Transpose), i);
+                double change = (HiddenLayer.Errors.TheMatrix[i, 0] * InputLayer.Output.TheMatrix[i, 0] * (1.0 - InputLayer.Output.TheMatrix[i, 0]));
+                InputLayer.Weights.AddToLine(LearningRate * (change * inputs_Transpose), i);
             }
-            //WeightInput_hidden += LearningRate * ((hidden_errors * Hidden_Outputs * (1.0 - Hidden_Outputs)) * inputs.Transpose());
         }
 
         public Matrix QueryNetwrok(Matrix inputs)
         {
-            Matrix Hidden_Inputs = WeightInput_hidden * inputs;
+            InputLayer.Output = InputLayer.Weights * inputs;
 
             for (int i = 0; i < HiddenNodes; i++)
             {
-                Hidden_Outputs.TheMatrix[i, 0] = ActivationFunction(Hidden_Inputs.TheMatrix[i, 0]);
+                InputLayer.Output.TheMatrix[i, 0] = ActivationFunction(InputLayer.Output.TheMatrix[i, 0]);
             }
 
-            Matrix final_Inputs = WeighHidden_output * Hidden_Outputs;
-            Matrix final_Outputs = new Matrix(OutputNodes, 1);
+            HiddenLayer.Output = HiddenLayer.Weights * InputLayer.Output;
+            OutputLayer.Output = new Matrix(OutputNodes, 1);
 
             for (int i = 0; i < OutputNodes; i++)
             {
-                final_Outputs.TheMatrix[i, 0] = ActivationFunction(final_Inputs.TheMatrix[i, 0]);
+                OutputLayer.Output.TheMatrix[i, 0] = ActivationFunction(HiddenLayer.Output.TheMatrix[i, 0]);
             }
 
-            return final_Outputs;
+            return OutputLayer.Output;
         }
 
         public double ActivationFunction(double x)
         {
             return Functions.Sigmoid(x);
         }
+    }
+
+    public class Layer
+    {
+        public Matrix Output { get; set; }
+        public Matrix Weights { get; set; }
+        public Matrix Errors { get; set; }
     }
 }

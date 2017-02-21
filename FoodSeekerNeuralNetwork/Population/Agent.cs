@@ -8,7 +8,7 @@ namespace Population
 {
     public class Agent : BasePopulation
     {
-        public double Health { get; set; }
+        public double Energy { get; set; }
 
         private readonly int _eyesCount;
         private Network _network;
@@ -19,6 +19,7 @@ namespace Population
 
         public Agent(Vector2 position, int eyesCount)
         {
+            Energy = 100;
             Position = position;
             Radius = 20;
             Color = Color.Red;
@@ -35,18 +36,22 @@ namespace Population
         {
             for(int i = 0; i < _eyesCount; i ++)
             {
-                bool eyeSeesSomething = false;
-                foreach(BasePopulation b in items)
+                double distance;
+                double minDistance = 1000000;
+                foreach (BasePopulation b in items)
                 {
                     if (b == this) continue;
-                    if(Functions.RayIntersectsCricle(Position, Position + new Vector2(-1, 0).Rotate((Math.PI / 2 - _eyesRadius / 2 + i * _distanceBetweenEyes)), b.Position, b.Radius))
+                    Vector2 direction = (new Vector2(-_eyeLength, 0).Rotate(-(Math.PI / 2 - _eyesRadius / 2 + (i * _distanceBetweenEyes))));
+                    if (Functions.RayIntersectsCricle(Position, direction, b.Position, b.Radius, out distance))
                     {
-                        _eyeSees[i] = b;//TODO:check if there is a closer one
-                        eyeSeesSomething = true;
-                        break;
+                        if(minDistance > distance)
+                        {
+                            minDistance = distance;
+                            _eyeSees[i] = b;
+                        }
                     }
                 }
-                if(!eyeSeesSomething)
+                if(minDistance == 1000000)
                 {
                     _eyeSees[i] = null;
                 }
@@ -68,9 +73,14 @@ namespace Population
             for (int i = 0; i < _eyesCount; i ++)
             {
                 Pen pen = new Pen(_eyeSees[i] != null ? _eyeSees[i].Color : Color.Black);
-                Vector2 direction = Position + (new Vector2(-1, 0).Rotate(-(Math.PI / 2 - _eyesRadius / 2 + (i * _distanceBetweenEyes))).Normaize() * _eyeLength);
-                graphics.DrawLine(pen, (int)Position.X, bitmap.Height - (int)Position.Y, (int)direction.X, bitmap.Height - (int)direction.Y);
+                Vector2 direction = (new Vector2(-_eyeLength, 0).Rotate(-(Math.PI / 2 - _eyesRadius / 2 + (i * _distanceBetweenEyes))));
+                graphics.DrawLine(pen, (int)Position.X, bitmap.Height - (int)Position.Y, (int)(Position + direction).X, bitmap.Height - (int)(Position + direction).Y);
             }
+
+            string text = "E:" + Energy;
+
+            brush.Color = Color.Black;
+            graphics.DrawString(text, new Font("Consolas", 8), brush, (int)Position.X + 4, (int)(bitmap.Height - Position.Y));
         }
 
         public class AgentComparer : IEqualityComparer<BasePopulation>

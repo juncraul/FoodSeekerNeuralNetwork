@@ -35,11 +35,12 @@ namespace FoodSeekerNeuralNetwork
 
             
             timerForDrawing.Start();
+            timerForLogic.Start();
         }
 
         private void TimerForLogic_Tick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            applicationEngine.DoLogic();
         }
 
         private void TimerForDrawing_Tick(object sender, EventArgs e)
