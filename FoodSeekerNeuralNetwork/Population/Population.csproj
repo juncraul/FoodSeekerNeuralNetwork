@@ -42,7 +42,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agent.cs" />
+    <Compile Include="BasePopulation.cs" />
+    <Compile Include="Food.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mathematics\Mathematics.csproj">
+      <Project>{769a5e81-3b29-44d3-a598-0b8fea1e48bf}</Project>
+      <Name>Mathematics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork.csproj">
+      <Project>{b9d74257-02cd-4a29-a380-f6ce9ff5227f}</Project>
+      <Name>NeuralNetwork</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
