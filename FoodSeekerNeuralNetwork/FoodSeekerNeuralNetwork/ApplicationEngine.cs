@@ -63,6 +63,9 @@ namespace FoodSeekerNeuralNetwork
             foreach (Agent a in agents)
             {
                 a.CheckEyes(allPopulation);
+                a.SendSignalsToBrain();
+                a.AgentActivity();
+                a.CheckForFood(food);
             }
         }
     }

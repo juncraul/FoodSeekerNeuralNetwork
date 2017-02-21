@@ -20,7 +20,7 @@ namespace Population
         public void Draw(Graphics graphics, Bitmap bitmap)
         {
             SolidBrush brush = new SolidBrush(Color);
-            graphics.FillEllipse(brush, new Rectangle((int)Position.X, bitmap.Height - (int)Position.Y, (int)Radius, (int)Radius));
+            graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
         }
 
         public class FoodComparer : IEqualityComparer<BasePopulation>

@@ -48,9 +48,9 @@ namespace Mathematics
             return this * (1 / Magnitude());
         }
 
-        public Vector2 Rotate(double degree)
+        public Vector2 Rotate(double radian)
         {
-            return new Vector2(X * Math.Cos(degree) - Y * Math.Sin(degree), X * Math.Sin(degree) + Math.Cos(degree));
+            return new Vector2(X * Math.Cos(radian) - Y * Math.Sin(radian), X * Math.Sin(radian) + Math.Cos(radian));
         }
 
         public int GetHashCode(Vector2 obj)

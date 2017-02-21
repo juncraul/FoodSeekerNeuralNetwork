@@ -3,7 +3,7 @@ using System;
 
 namespace NeuralNetwork
 {
-    public class Network
+    public class NetworkSpiking
     {
         public int InputNodes { get; set; }
         public int HiddenNodes { get; set; }

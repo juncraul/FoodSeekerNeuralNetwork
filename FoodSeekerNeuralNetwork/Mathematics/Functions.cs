@@ -25,5 +25,15 @@ namespace Mathematics
             Vector2 normal = (intersectionPosition - circleOrigin).Normaize();      //maybe used later
             return s < circleRadius;
         }
+
+        public static bool CirclesCollision(Vector2 circle0Origin, double circle0Radius, Vector2 circle1Origin, double circle1Radius)
+        {
+            return DistanceBetweenTwoPoints(circle0Origin, circle1Origin) < circle0Radius + circle1Radius;
+        }
+
+        public static double DistanceBetweenTwoPoints(Vector2 point0, Vector2 point1)
+        {
+            return Math.Sqrt(Math.Pow(point0.X - point1.X, 2) + Math.Pow(point0.Y - point1.Y, 2));
+        }
     }
 }
