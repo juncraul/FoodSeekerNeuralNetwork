@@ -30,7 +30,7 @@ namespace NeuralNetwork
             HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
         }
 
-        public void TrainNetwrok(Matrix inputs, Matrix target)
+        public Matrix TrainNetwrok(Matrix inputs, Matrix target)
         {
             OutputLayer.Output = QueryNetwrok(inputs);
             OutputLayer.Errors = target - OutputLayer.Output;
@@ -49,6 +49,8 @@ namespace NeuralNetwork
                 double change = (HiddenLayer.Errors.TheMatrix[i, 0] * InputLayer.Output.TheMatrix[i, 0] * (1.0 - InputLayer.Output.TheMatrix[i, 0]));
                 InputLayer.Weights.AddToLine(LearningRate * (change * inputs_Transpose), i);
             }
+
+            return OutputLayer.Output;
         }
 
         public Matrix QueryNetwrok(Matrix inputs)

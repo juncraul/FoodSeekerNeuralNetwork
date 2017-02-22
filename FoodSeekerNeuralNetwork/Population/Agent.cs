@@ -34,7 +34,7 @@ namespace Population
             _eyeLength = 30;
             _eyesRadius = Math.PI / 2;//90 degree
             _distanceBetweenEyes = _eyesRadius / _eyesCount;
-            _rotationSpeed = 1.6f;
+            _rotationSpeed = 3.6f;
             _thrustSpeed = 3;
             _network = new Network();
             _network.InitializeNetwork(_eyesCount, 5, 3, 0.3f);
@@ -69,6 +69,7 @@ namespace Population
 
         public void SendSignalsToBrain()
         {
+            bool hasFoodInFront = false;
             Matrix sensorMatrix = new Matrix(_eyesCount, 1);
             for(int i = 0; i < _eyesCount; i ++)
             {
@@ -76,27 +77,31 @@ namespace Population
                 if(_eyeSees[i].Color == Color.Red)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.3f;
-                } else if(_eyeSees[i].Color == Color.Green)
+                } else if(_eyeSees[i].Color == Color.GreenYellow)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.6f;
+                    hasFoodInFront = true;
                 }
                 else if (_eyeSees[i].Color == Color.Brown)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.9f;
                 }
             }
-            Matrix brainResponse = _network.QueryNetwrok(sensorMatrix);
+
+            Matrix expectedResonse = GetExpectedOutput(hasFoodInFront);
+
+            Matrix actualResponse = _network.TrainNetwrok(sensorMatrix, expectedResonse);
             previousSensorMatrix = sensorMatrix;
 
-            _directionRadian += brainResponse.TheMatrix[0, 0] * _rotationSpeed;
-            _directionRadian -= brainResponse.TheMatrix[1, 0] * _rotationSpeed;
-            _speed = brainResponse.TheMatrix[2, 0] * _thrustSpeed;
+            _directionRadian += actualResponse.TheMatrix[0, 0] * _rotationSpeed;
+            _directionRadian -= actualResponse.TheMatrix[1, 0] * _rotationSpeed;
+            _speed = actualResponse.TheMatrix[2, 0] * _thrustSpeed;
 
             //if(brainResponse.TheMatrix[0, 0] > brainResponse.TheMatrix[1, 0])
             //    Color = Color.Chocolate;
 
-            if (brainResponse.TheMatrix[2, 0] < 0)
-                Color = Color.Chocolate;
+            //if (actualResponse.TheMatrix[2, 0] < 0)
+            //    Color = Color.Chocolate;
         }
 
         public void AgentActivity()
@@ -105,9 +110,24 @@ namespace Population
             Energy-= 0.1;
         }
 
-        public void GivePunishment()
+        public Matrix GetExpectedOutput(bool hasFoodInFront)
         {
+            Matrix expectedOutput = new Matrix(3, 1);
 
+            if(hasFoodInFront)
+            {
+                expectedOutput.TheMatrix[0, 0] = 0;
+                expectedOutput.TheMatrix[1, 0] = 0;
+                expectedOutput.TheMatrix[2, 0] = 1;
+            }
+            else
+            {
+                expectedOutput.TheMatrix[0, 0] = 1;
+                expectedOutput.TheMatrix[1, 0] = 1;
+                expectedOutput.TheMatrix[2, 0] = 0;
+            }
+
+            return expectedOutput;
         }
 
         public void CheckForFood(List<Food> food)
