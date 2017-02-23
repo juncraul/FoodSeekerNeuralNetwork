@@ -1,5 +1,6 @@
 ﻿using Mathematics;
 using System;
+using System.Drawing;
 
 namespace NeuralNetwork
 {
@@ -13,6 +14,12 @@ namespace NeuralNetwork
         private Layer InputLayer { get; set; }
         private Layer HiddenLayer { get; set; }
         private Layer OutputLayer { get; set; }
+
+        private int _neuronRadiusDraw;
+        private int _distanceBetweenLayersDraw;
+        private int _distanceBetweenNeuronsDraw;
+        private int _startXDraw;
+        private int _startYDraw;
 
         public void InitializeNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate)
         {
@@ -28,6 +35,12 @@ namespace NeuralNetwork
             InputLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5));
             HiddenLayer.Weights = new Matrix(OutputNodes, HiddenNodes);
             HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
+
+            _neuronRadiusDraw = 10;
+            _distanceBetweenLayersDraw = 100;
+            _distanceBetweenNeuronsDraw = 10;
+            _startXDraw = 10;
+            _startYDraw = 10;
         }
 
         public Matrix TrainNetwrok(Matrix inputs, Matrix target)
@@ -71,6 +84,54 @@ namespace NeuralNetwork
             }
 
             return OutputLayer.Output;
+        }
+
+        public void Draw(Graphics graphics, Bitmap bitmap)
+        {
+            SolidBrush brush = new SolidBrush(Color.Yellow);
+            Pen pen = new Pen(Color.Black);
+
+            for (int i = 0; i < InputLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < InputLayer.Weights.Lines; j++)
+                {
+                    pen.Width = (int)(Math.Abs(InputLayer.Weights.TheMatrix[j, i]) * 5);
+                    pen.Color = InputLayer.Weights.TheMatrix[j, i] < 0 ? Color.Red : Color.Blue;
+                    graphics.DrawLine(pen, _startXDraw + _neuronRadiusDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + 10)) + _neuronRadiusDraw,
+                                           _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw, (_startYDraw + j * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw);
+                }
+            }
+
+            for (int i = 0; i < HiddenLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < HiddenLayer.Weights.Lines; j++)
+                {
+                    pen.Width = (int)(Math.Abs(HiddenLayer.Weights.TheMatrix[j, i]) * 5);
+                    pen.Color = HiddenLayer.Weights.TheMatrix[j, i] < 0 ? Color.Red : Color.Blue;
+                    graphics.DrawLine(pen, _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw,
+                                           _startXDraw + _distanceBetweenLayersDraw * 2 + _neuronRadiusDraw, (_startYDraw + j * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw);
+                }
+            }
+
+            for (int i = 0; i < InputNodes; i++)
+            {
+                graphics.FillEllipse(brush, new Rectangle(_startXDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + 10)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+            }
+
+            for (int i = 0; i < HiddenNodes; i++)
+            {
+                graphics.FillEllipse(brush, new Rectangle(_startXDraw + _distanceBetweenLayersDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+            }
+
+            for (int i = 0; i < OutputNodes; i++)
+            {
+                brush.Color = Color.Yellow;
+                graphics.FillEllipse(brush, new Rectangle(_startXDraw + _distanceBetweenLayersDraw * 2, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+
+                string text = string.Format("{0:N3}", OutputLayer.Output.TheMatrix[i, 0]);
+                brush.Color = Color.Black;
+                graphics.DrawString(text, new Font("Consolas", 8), brush, _neuronRadiusDraw * 2 + _startXDraw + _distanceBetweenLayersDraw * 2, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)));
+            }
         }
 
         public double ActivationFunction(double x)

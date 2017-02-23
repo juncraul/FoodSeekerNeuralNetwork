@@ -9,6 +9,7 @@ namespace Population
     public class Agent : BasePopulation
     {
         public double Energy { get; set; }
+        public bool IsSelected { get; set; }
 
         private readonly int _eyesCount;
         private Network _network;
@@ -34,10 +35,10 @@ namespace Population
             _eyeLength = 30;
             _eyesRadius = Math.PI / 2;//90 degree
             _distanceBetweenEyes = _eyesRadius / _eyesCount;
-            _rotationSpeed = 3.6f;
+            _rotationSpeed = 0.2f;
             _thrustSpeed = 3;
             _network = new Network();
-            _network.InitializeNetwork(_eyesCount, 5, 3, 0.3f);
+            _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f);
         }
 
         public void CheckEyes(List<BasePopulation> items)
@@ -71,8 +72,10 @@ namespace Population
         {
             bool hasFoodInFront = false;
             Matrix sensorMatrix = new Matrix(_eyesCount, 1);
+            bool[] foodPosition = new bool[_eyesCount];
             for(int i = 0; i < _eyesCount; i ++)
             {
+                foodPosition[i] = false;
                 if (_eyeSees[i] == null) continue;
                 if(_eyeSees[i].Color == Color.Red)
                 {
@@ -81,6 +84,7 @@ namespace Population
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.6f;
                     hasFoodInFront = true;
+                    foodPosition[i] = true;
                 }
                 else if (_eyeSees[i].Color == Color.Brown)
                 {
@@ -88,14 +92,13 @@ namespace Population
                 }
             }
 
-            Matrix expectedResonse = GetExpectedOutput(hasFoodInFront);
+            Matrix expectedResonse = GetExpectedOutput(hasFoodInFront, foodPosition);
 
             Matrix actualResponse = _network.TrainNetwrok(sensorMatrix, expectedResonse);
             previousSensorMatrix = sensorMatrix;
 
-            _directionRadian += actualResponse.TheMatrix[0, 0] * _rotationSpeed;
-            _directionRadian -= actualResponse.TheMatrix[1, 0] * _rotationSpeed;
-            _speed = actualResponse.TheMatrix[2, 0] * _thrustSpeed;
+            _directionRadian += (actualResponse.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
+            _speed = actualResponse.TheMatrix[1, 0] * _thrustSpeed;
 
             //if(brainResponse.TheMatrix[0, 0] > brainResponse.TheMatrix[1, 0])
             //    Color = Color.Chocolate;
@@ -110,21 +113,24 @@ namespace Population
             Energy-= 0.1;
         }
 
-        public Matrix GetExpectedOutput(bool hasFoodInFront)
+        public Matrix GetExpectedOutput(bool hasFoodInFront, bool[] foodPosition)
         {
-            Matrix expectedOutput = new Matrix(3, 1);
+            Matrix expectedOutput = new Matrix(2, 1);
 
             if(hasFoodInFront)
             {
-                expectedOutput.TheMatrix[0, 0] = 0;
-                expectedOutput.TheMatrix[1, 0] = 0;
-                expectedOutput.TheMatrix[2, 0] = 1;
+                double delta = 0;
+                for(int i = 0; i < foodPosition.Length; i ++)
+                {
+                    delta += foodPosition[i] ? (i < foodPosition.Length / 2 ? 0.02f : -0.02f) : 0;
+                }
+                expectedOutput.TheMatrix[0, 0] = 0.5f + delta;
+                expectedOutput.TheMatrix[1, 0] = 1;
             }
             else
             {
                 expectedOutput.TheMatrix[0, 0] = 1;
-                expectedOutput.TheMatrix[1, 0] = 1;
-                expectedOutput.TheMatrix[2, 0] = 0;
+                expectedOutput.TheMatrix[1, 0] = 0;
             }
 
             return expectedOutput;
@@ -143,13 +149,16 @@ namespace Population
             }
         }
 
-        public void Draw(Graphics graphics, Bitmap bitmap)
+        public void DrawAgent(Graphics graphics, Bitmap bitmap)
         {
             SolidBrush brush = new SolidBrush(Color);
             Pen pen = new Pen(Color.Black);
             pen.Width = 2;
             graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
             graphics.DrawEllipse(pen, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
+
+            if(IsSelected)
+                graphics.DrawRectangle(pen, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
 
             pen.Width = 1;
             for (int i = 0; i < _eyesCount; i ++)
@@ -163,6 +172,11 @@ namespace Population
 
             brush.Color = Color.Black;
             graphics.DrawString(text, new Font("Consolas", 8), brush, (int)Position.X + 20, (int)(bitmap.Height - Position.Y));
+        }
+
+        public void DrawBrain(Graphics graphics, Bitmap bitmap)
+        {
+            _network.Draw(graphics, bitmap);
         }
 
         public class AgentComparer : IEqualityComparer<BasePopulation>

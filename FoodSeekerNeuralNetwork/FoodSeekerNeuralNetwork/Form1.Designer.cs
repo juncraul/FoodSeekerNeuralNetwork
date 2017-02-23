@@ -28,35 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.pictureBoxWorld = new System.Windows.Forms.PictureBox();
+            this.pictureBoxBrainView = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWorld)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).BeginInit();
             this.SuspendLayout();
             // 
-            // pictureBox1
+            // pictureBoxWorld
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(724, 581);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.pictureBoxWorld.Location = new System.Drawing.Point(12, 12);
+            this.pictureBoxWorld.Name = "pictureBoxWorld";
+            this.pictureBoxWorld.Size = new System.Drawing.Size(724, 581);
+            this.pictureBoxWorld.TabIndex = 0;
+            this.pictureBoxWorld.TabStop = false;
+            this.pictureBoxWorld.Click += new System.EventHandler(this.pictureBoxWorld_Click);
+            // 
+            // pictureBoxBrainView
+            // 
+            this.pictureBoxBrainView.Location = new System.Drawing.Point(743, 13);
+            this.pictureBoxBrainView.Name = "pictureBoxBrainView";
+            this.pictureBoxBrainView.Size = new System.Drawing.Size(478, 580);
+            this.pictureBoxBrainView.TabIndex = 1;
+            this.pictureBoxBrainView.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(886, 605);
-            this.Controls.Add(this.pictureBox1);
+            this.ClientSize = new System.Drawing.Size(1233, 605);
+            this.Controls.Add(this.pictureBoxBrainView);
+            this.Controls.Add(this.pictureBoxWorld);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWorld)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBoxWorld;
+        private System.Windows.Forms.PictureBox pictureBoxBrainView;
     }
 }
 

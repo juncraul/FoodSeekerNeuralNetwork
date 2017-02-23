@@ -35,5 +35,10 @@ namespace Mathematics
         {
             return Math.Sqrt(Math.Pow(point0.X - point1.X, 2) + Math.Pow(point0.Y - point1.Y, 2));
         }
+
+        public static bool CollisionPointCircle(Vector2 point, Vector2 circleOrigin, double circleRadius)
+        {
+            return circleRadius > DistanceBetweenTwoPoints(point, circleOrigin);
+        }
     }
 }

@@ -13,47 +13,69 @@ namespace FoodSeekerNeuralNetwork
         public List<Agent> agents;
         public List<Food> food;
         Random random;
-        Bitmap bitmap;
-        Graphics graphics;
+        Bitmap bitmapWorld;
+        Graphics graphicsWorld;
 
-        private ApplicationEngine(Size canvasSize)
+        Bitmap bitmapBrain;
+        Graphics graphicsBrain;
+
+        DateTime timeWhenApplicationStarted;
+        DateTime lastTimeFoodWasGenerated;
+
+        private ApplicationEngine(Size worldCanvasSize, Size brainCanvasSize)
         {
+            timeWhenApplicationStarted = DateTime.Now;
             agents = new List<Agent>();
             food = new List<Food>();
             random = new Random();
-            bitmap = new Bitmap(canvasSize.Width, canvasSize.Height);
-            graphics = Graphics.FromImage(bitmap);
+            bitmapWorld = new Bitmap(worldCanvasSize.Width, worldCanvasSize.Height);
+            graphicsWorld = Graphics.FromImage(bitmapWorld);
+
+            bitmapBrain = new Bitmap(brainCanvasSize.Width, brainCanvasSize.Height);
+            graphicsBrain = Graphics.FromImage(bitmapBrain);
 
             for (int i = 0; i < 10; i++)
             {
-                agents.Add(new Agent(new Vector2(random.Next() % bitmap.Width, random.Next() % bitmap.Height), 10));
+                agents.Add(new Agent(new Vector2(random.Next() % bitmapWorld.Width, random.Next() % bitmapWorld.Height), 10));
             }
 
             for (int i = 0; i < 10; i++)
             {
-                food.Add(new Food(new Vector2(random.Next() % bitmap.Width, random.Next() % bitmap.Height)));
+                GenerateFood();
             }
         }
 
-        public static ApplicationEngine GetInstance(Size canvasSize)
+        public static ApplicationEngine GetInstance(Size worldCanvasSize, Size brainCanvasSize)
         {
-            return _applicationEngineInstance = (_applicationEngineInstance == null ? new ApplicationEngine(canvasSize) : _applicationEngineInstance);
+            return _applicationEngineInstance = (_applicationEngineInstance == null ? new ApplicationEngine(worldCanvasSize, brainCanvasSize) : _applicationEngineInstance);
         }
 
-        public Bitmap Draw()
+        public Bitmap DrawWorld()
         {
             SolidBrush brush = new SolidBrush(Color.White);
-            graphics.FillRectangle(brush, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+            graphicsWorld.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
             foreach (Agent a in agents)
             {
-                a.Draw(graphics, bitmap);
+                a.DrawAgent(graphicsWorld, bitmapWorld);
             }
             foreach (Food f in food)
             {
-                f.Draw(graphics, bitmap);
+                f.Draw(graphicsWorld, bitmapWorld);
             }
 
-            return bitmap;
+            return bitmapWorld;
+        }
+
+        public Bitmap DrawBrain()
+        {
+            SolidBrush brush = new SolidBrush(Color.White);
+            graphicsBrain.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
+            Agent agent = agents.Where(a =>a.IsSelected).FirstOrDefault();
+            if (agent == null)
+                agent = agents.FirstOrDefault();
+            agent.DrawBrain(graphicsBrain, bitmapBrain);
+
+            return bitmapBrain;
         }
 
         public void DoLogic()
@@ -66,6 +88,35 @@ namespace FoodSeekerNeuralNetwork
                 a.SendSignalsToBrain();
                 a.AgentActivity();
                 a.CheckForFood(food);
+            }
+
+            TimeSpan timeBetweenFoodGeneration = (DateTime.Now - lastTimeFoodWasGenerated);
+            if (timeBetweenFoodGeneration.TotalMilliseconds > ApplicationSettings.GenerateFoodMilliseconds)
+            {
+                GenerateFood();
+            }
+        }
+
+        public void GenerateFood()
+        {
+            lastTimeFoodWasGenerated = DateTime.Now;
+            food.Add(new Food(new Vector2(random.Next() % bitmapWorld.Width, random.Next() % bitmapWorld.Height)));
+        }
+
+        public void SelectAgent(Point p)
+        {
+            foreach (Agent a in agents)
+            {
+                a.IsSelected = false;
+            }
+
+            foreach (Agent a in agents)
+            {
+                if(Functions.CollisionPointCircle(new Vector2(p.X, p.Y), a.Position, a.Radius))
+                {
+                    a.IsSelected = true;
+                    break;
+                }
             }
         }
     }
