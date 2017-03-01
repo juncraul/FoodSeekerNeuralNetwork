@@ -24,7 +24,7 @@ namespace GeneticProgramming
             return Mutate(offspring);
         }
 
-        public string Mutate(string bits)
+        string Mutate(string bits)
         {
             string output = "";
 
@@ -49,7 +49,7 @@ namespace GeneticProgramming
             return output;
         }
 
-        public string Crossover(string parent0, string parent1)
+        string Crossover(string parent0, string parent1)
         {
             int crossoverPivot = (int)(_random.NextDouble() * parent0.Length);
 

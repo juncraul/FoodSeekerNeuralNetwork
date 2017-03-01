@@ -40,5 +40,10 @@ namespace Mathematics
         {
             return circleRadius > DistanceBetweenTwoPoints(point, circleOrigin);
         }
+
+        public static string ToBin(int value, int len)
+        {
+            return (len > 1 ? ToBin(value >> 1, len - 1) : null) + "01"[value & 1];
+        }
     }
 }

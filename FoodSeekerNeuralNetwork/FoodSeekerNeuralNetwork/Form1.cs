@@ -26,7 +26,7 @@ namespace FoodSeekerNeuralNetwork
         {
             applicationEngine = ApplicationEngine.GetInstance(new Size(pictureBoxWorld.Width, pictureBoxWorld.Height), new Size(pictureBoxBrainView.Width, pictureBoxBrainView.Height));
             timerForDrawing = new Timer();
-            timerForDrawing.Interval = 200;
+            timerForDrawing.Interval = 50;
             timerForDrawing.Tick += TimerForDrawing_Tick;
             timerForLogic = new Timer();
             timerForLogic.Interval = 50;

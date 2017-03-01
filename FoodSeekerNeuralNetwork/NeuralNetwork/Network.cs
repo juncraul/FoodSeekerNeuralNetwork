@@ -138,5 +138,57 @@ namespace NeuralNetwork
         {
             return Functions.Sigmoid(x);
         }
+
+        public string ConvertNetworkToBitString()
+        {
+            string bits = string.Empty;
+
+            for (int i = 0; i < InputLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < InputLayer.Weights.Lines; j++)
+                {
+                    int value = (int)(((InputLayer.Weights.TheMatrix[j, i] + 1) / 2) * 1000);
+                    int scaledDownTo256Bit = (int)(value * 255.0 / 999.0);
+                    bits += Functions.ToBin(scaledDownTo256Bit, 8);
+                }
+            }
+
+            for (int i = 0; i < HiddenLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < HiddenLayer.Weights.Lines; j++)
+                {
+                    int value = (int)(((HiddenLayer.Weights.TheMatrix[j, i] + 1) / 2) * 1000);
+                    int scaledDownTo256Bit = (int)(value * 255.0 / 999.0);
+                    bits += Functions.ToBin(scaledDownTo256Bit, 8);
+                }
+            }
+            return bits;
+        }
+
+        public void ConvertBitStringToNetwork(string bits)
+        {
+            int index = 0;
+            for (int i = 0; i < InputLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < InputLayer.Weights.Lines; j++)
+                {
+                    int scaledDownTo256Bit = Convert.ToInt32(bits.Substring(index, 8), 2);
+                    double value = (scaledDownTo256Bit * 999 / 255.0 / 1000.0 * 2 - 1);
+                    InputLayer.Weights.TheMatrix[j, i] = value;
+                    index += 8;
+                }
+            }
+
+            for (int i = 0; i < HiddenLayer.Weights.Columns; i++)
+            {
+                for (int j = 0; j < HiddenLayer.Weights.Lines; j++)
+                {
+                    int scaledDownTo256Bit = Convert.ToInt32(bits.Substring(index, 8), 2);
+                    double value = (scaledDownTo256Bit * 999 / 255.0 / 1000.0 * 2 - 1);
+                    HiddenLayer.Weights.TheMatrix[j, i] = value;
+                    index += 8;
+                }
+            }
+        }
     }
 }

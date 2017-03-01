@@ -82,6 +82,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeneticProgramming\GeneticProgramming.csproj">
+      <Project>{d1b9c6ea-226c-47bd-ab42-8253ba548f43}</Project>
+      <Name>GeneticProgramming</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Mathematics\Mathematics.csproj">
       <Project>{769a5e81-3b29-44d3-a598-0b8fea1e48bf}</Project>
       <Name>Mathematics</Name>

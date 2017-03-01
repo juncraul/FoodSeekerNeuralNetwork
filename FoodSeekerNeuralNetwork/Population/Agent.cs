@@ -21,6 +21,7 @@ namespace Population
         private double _rotationSpeed;
         private double _thrustSpeed;
         private double _speed;
+        private double _energyDecay;
 
         private Matrix previousSensorMatrix;
 
@@ -29,6 +30,7 @@ namespace Population
             Energy = 100;
             Position = position;
             Radius = 20;
+            _energyDecay = 0.5;
             Color = Color.Red;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
@@ -110,7 +112,7 @@ namespace Population
         public void AgentActivity()
         {
             Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
-            Energy-= 0.1;
+            Energy-= _energyDecay;
         }
 
         public Matrix GetExpectedOutput(bool hasFoodInFront, bool[] foodPosition)
@@ -201,6 +203,16 @@ namespace Population
                 //Calculate the hash code for the product. 
                 return hashPosition ^ hashRadius ^ hashColor;
             }
+        }
+
+        public string GetBrainAsBits()
+        {
+            return _network.ConvertNetworkToBitString();
+        }
+
+        public void InsertNewBrainAsBits(string bits)
+        {
+            _network.ConvertBitStringToNetwork(bits);
         }
     }
 }
