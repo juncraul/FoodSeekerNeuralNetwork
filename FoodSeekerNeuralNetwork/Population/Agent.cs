@@ -11,6 +11,8 @@ namespace Population
         public double Energy { get; set; }
         public bool IsSelected { get; set; }
 
+        public readonly List<string> EatsOtherSpecies;
+
         private readonly int _eyesCount;
         private Network _network;
         private double _distanceBetweenEyes;
@@ -25,13 +27,13 @@ namespace Population
 
         private Matrix previousSensorMatrix;
 
-        public Agent(Vector2 position, int eyesCount)
+        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies)
         {
             Energy = 100;
             Position = position;
             Radius = 20;
-            _energyDecay = 0.5;
-            Color = Color.Red;
+            _energyDecay = 0.75;
+            Color = color;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
             _eyeLength = 30;
@@ -41,6 +43,8 @@ namespace Population
             _thrustSpeed = 3;
             _network = new Network();
             _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f);
+            SpecieType = specieType;
+            EatsOtherSpecies = eatsOtherSpecies;
         }
 
         public void CheckEyes(List<BasePopulation> items)
@@ -82,15 +86,27 @@ namespace Population
                 if(_eyeSees[i].Color == Color.Red)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.3f;
+                    if(EatsOtherSpecies.Contains(_eyeSees[i].SpecieType))
+                    {
+                        hasFoodInFront = true;
+                        foodPosition[i] = true;
+                    }
                 } else if(_eyeSees[i].Color == Color.GreenYellow)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.6f;
-                    hasFoodInFront = true;
-                    foodPosition[i] = true;
+                    if (EatsOtherSpecies.Contains(_eyeSees[i].SpecieType))
+                    {
+                        hasFoodInFront = true;
+                        foodPosition[i] = true;
+                    }
                 }
-                else if (_eyeSees[i].Color == Color.Brown)
+                else if (_eyeSees[i].Color == Color.Blue)
                 {
                     sensorMatrix.TheMatrix[i, 0] = 0.9f;
+                }
+                else
+                {
+                    sensorMatrix.TheMatrix[i, 0] = 0.0f;
                 }
             }
 
@@ -138,16 +154,30 @@ namespace Population
             return expectedOutput;
         }
 
-        public void CheckForFood(List<Food> food)
+        public void CheckForFood(List<Food> food, List<Agent> agents)
         {
             for(int i = food.Count - 1; i >= 0; i --)
             {
-                if(Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
+                if (!EatsOtherSpecies.Contains(food[i].SpecieType))
+                    continue;
+                if (Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
                 {
                     Energy += food[i].FoodValue;
                     food.RemoveAt(i);
                 }
+            }
 
+            for (int i = agents.Count - 1; i >= 0; i--)
+            {
+                if (agents[i] == this)
+                    continue;
+                if (!EatsOtherSpecies.Contains(agents[i].SpecieType))
+                    continue;
+                if (Functions.CirclesCollision(Position, Radius, agents[i].Position, agents[i].Radius))
+                {
+                    Energy += agents[i].Energy / 2;
+                    agents.RemoveAt(i);
+                }
             }
         }
 

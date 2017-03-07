@@ -9,12 +9,13 @@ namespace Population
     {
         public double FoodValue { get; set; }
 
-        public Food(Vector2 position)
+        public Food(Vector2 position, string specieType, Color color)
         {
             FoodValue = 100;
             Position = position;
             Radius = 10;
-            Color = Color.GreenYellow;
+            Color = color;
+            SpecieType = specieType;
         }
 
         public void Draw(Graphics graphics, Bitmap bitmap)

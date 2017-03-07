@@ -10,6 +10,7 @@ namespace Population
         public Vector2 Position { get; set; }
         public double Radius { get; set; }
         public Color Color { get; set; }
+        public string SpecieType { get; set; }
     }
 
     public class BaseComparer : IEqualityComparer<BasePopulation>

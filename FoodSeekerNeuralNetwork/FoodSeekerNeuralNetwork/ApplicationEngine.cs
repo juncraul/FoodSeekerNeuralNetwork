@@ -14,7 +14,6 @@ namespace FoodSeekerNeuralNetwork
         private static GeneticEvolution _geneticEvolution;
         public List<Agent> agents;
         public List<Food> food;
-        Random random;
         Bitmap bitmapWorld;
         Graphics graphicsWorld;
 
@@ -24,8 +23,17 @@ namespace FoodSeekerNeuralNetwork
         DateTime timeWhenApplicationStarted;
         DateTime lastTimeFoodWasGenerated;
 
-        int numberOfAgents = 10;
+        int numberOfAgentsTypeOne = 10;
+        int numberOfAgentsTypeTwo = 10;
         int numberOfEyes = 16;
+        string typeZero = "Berry";
+        string typeOne = "One";
+        string typeTwo = "Two";
+        Color colorZero = Color.GreenYellow;
+        Color colorOne = Color.Red;
+        Color colorTwo = Color.Blue;
+        List<string> typeOneEats = new List<string>();
+        List<string> typeTwoEats = new List<string>();
 
         private ApplicationEngine(Size worldCanvasSize, Size brainCanvasSize)
         {
@@ -33,16 +41,24 @@ namespace FoodSeekerNeuralNetwork
             _geneticEvolution = new GeneticEvolution(ApplicationSettings.Random, 0.007f, 0.7f);
             agents = new List<Agent>();
             food = new List<Food>();
-            random = new Random();
             bitmapWorld = new Bitmap(worldCanvasSize.Width, worldCanvasSize.Height);
             graphicsWorld = Graphics.FromImage(bitmapWorld);
 
             bitmapBrain = new Bitmap(brainCanvasSize.Width, brainCanvasSize.Height);
             graphicsBrain = Graphics.FromImage(bitmapBrain);
 
-            for (int i = 0; i < numberOfAgents; i++)
+            
+            typeOneEats.Add(typeZero);
+            typeTwoEats.Add(typeOne);
+
+            for (int i = 0; i < numberOfAgentsTypeOne; i++)
             {
-                agents.Add(new Agent(new Vector2(random.Next() % bitmapWorld.Width, random.Next() % bitmapWorld.Height), numberOfEyes));
+                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, colorOne, typeOneEats));
+            }
+
+            for (int i = 0; i < numberOfAgentsTypeTwo; i++)
+            {
+                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, colorTwo, typeTwoEats));
             }
 
             for (int i = 0; i < 10; i++)
@@ -60,13 +76,13 @@ namespace FoodSeekerNeuralNetwork
         {
             SolidBrush brush = new SolidBrush(Color.White);
             graphicsWorld.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
-            foreach (Agent a in agents)
-            {
-                a.DrawAgent(graphicsWorld, bitmapWorld);
-            }
             foreach (Food f in food)
             {
                 f.Draw(graphicsWorld, bitmapWorld);
+            }
+            foreach (Agent a in agents)
+            {
+                a.DrawAgent(graphicsWorld, bitmapWorld);
             }
 
             return bitmapWorld;
@@ -88,23 +104,34 @@ namespace FoodSeekerNeuralNetwork
         {
             List<BasePopulation> allPopulation = agents.Cast<BasePopulation>().Union(food.Cast<BasePopulation>()).ToList();
 
-            foreach (Agent a in agents)
+            for(int i = agents.Count -1; i >= 0; i --)
             {
-                a.CheckEyes(allPopulation);
-                a.SendSignalsToBrain();
-                a.AgentActivity();
-                a.CheckForFood(food);
+                agents[i].CheckEyes(allPopulation);
+                agents[i].SendSignalsToBrain();
+                agents[i].AgentActivity();
+                agents[i].CheckForFood(food, agents);
             }
 
             agents.RemoveAll(a => a.Energy <= 0);
 
-            for(int i = agents.Count; i < numberOfAgents; i ++)
+            for(int i = agents.Count; i < numberOfAgentsTypeOne + numberOfAgentsTypeTwo; i ++)
             {
-                string networkAsBits = _geneticEvolution.Reproduce(agents.OrderByDescending(a => a.Energy).ToList()[0].GetBrainAsBits(), 
-                                                                   agents.OrderByDescending(a => a.Energy).ToList()[1].GetBrainAsBits());
-                Agent agent = new Agent(new Vector2(random.Next() % bitmapWorld.Width, random.Next() % bitmapWorld.Height), numberOfEyes);
-                agent.InsertNewBrainAsBits(networkAsBits);
-                agents.Add(agent);
+                if(agents.Count(a=>a.SpecieType == typeOne) != numberOfAgentsTypeOne)
+                {
+                    string networkAsBits = _geneticEvolution.Reproduce(agents.Where(a => a.SpecieType == typeOne).OrderByDescending(a => a.Energy).ToList()[0].GetBrainAsBits(), 
+                                                                       agents.Where(a => a.SpecieType == typeOne).OrderByDescending(a => a.Energy).ToList()[1].GetBrainAsBits());
+                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, colorOne, typeOneEats);
+                    agent.InsertNewBrainAsBits(networkAsBits);
+                    agents.Add(agent);
+                }
+                else
+                {
+                    string networkAsBits = _geneticEvolution.Reproduce(agents.Where(a => a.SpecieType == typeTwo).OrderByDescending(a => a.Energy).ToList()[0].GetBrainAsBits(),
+                                                                       agents.Where(a => a.SpecieType == typeTwo).OrderByDescending(a => a.Energy).ToList()[1].GetBrainAsBits());
+                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, colorTwo, typeTwoEats);
+                    agent.InsertNewBrainAsBits(networkAsBits);
+                    agents.Add(agent);
+                }
             }
 
             TimeSpan timeBetweenFoodGeneration = (DateTime.Now - lastTimeFoodWasGenerated);
@@ -117,7 +144,7 @@ namespace FoodSeekerNeuralNetwork
         public void GenerateFood()
         {
             lastTimeFoodWasGenerated = DateTime.Now;
-            food.Add(new Food(new Vector2(random.Next() % bitmapWorld.Width, random.Next() % bitmapWorld.Height)));
+            food.Add(new Food(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), typeZero, colorZero));
         }
 
         public void SelectAgent(Point p)
