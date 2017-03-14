@@ -163,7 +163,7 @@ namespace Population
                 if (Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
                 {
                     Energy += food[i].FoodValue;
-                    food.RemoveAt(i);
+                    food[i].IsAlive = false;
                 }
             }
 
@@ -176,7 +176,7 @@ namespace Population
                 if (Functions.CirclesCollision(Position, Radius, agents[i].Position, agents[i].Radius))
                 {
                     Energy += agents[i].Energy / 2;
-                    agents.RemoveAt(i);
+                    agents[i].IsAlive = false;
                 }
             }
         }

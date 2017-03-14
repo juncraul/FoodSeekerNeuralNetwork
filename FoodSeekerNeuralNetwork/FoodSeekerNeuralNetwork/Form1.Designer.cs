@@ -30,8 +30,10 @@
         {
             this.pictureBoxWorld = new System.Windows.Forms.PictureBox();
             this.pictureBoxBrainView = new System.Windows.Forms.PictureBox();
+            this.pictureBoxGraph = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWorld)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBoxWorld
@@ -47,15 +49,24 @@
             // 
             this.pictureBoxBrainView.Location = new System.Drawing.Point(743, 13);
             this.pictureBoxBrainView.Name = "pictureBoxBrainView";
-            this.pictureBoxBrainView.Size = new System.Drawing.Size(478, 580);
+            this.pictureBoxBrainView.Size = new System.Drawing.Size(363, 580);
             this.pictureBoxBrainView.TabIndex = 1;
             this.pictureBoxBrainView.TabStop = false;
+            // 
+            // pictureBoxGraph
+            // 
+            this.pictureBoxGraph.Location = new System.Drawing.Point(12, 599);
+            this.pictureBoxGraph.Name = "pictureBoxGraph";
+            this.pictureBoxGraph.Size = new System.Drawing.Size(724, 203);
+            this.pictureBoxGraph.TabIndex = 2;
+            this.pictureBoxGraph.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1233, 605);
+            this.ClientSize = new System.Drawing.Size(1121, 814);
+            this.Controls.Add(this.pictureBoxGraph);
             this.Controls.Add(this.pictureBoxBrainView);
             this.Controls.Add(this.pictureBoxWorld);
             this.Name = "Form1";
@@ -63,6 +74,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWorld)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGraph)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -71,6 +83,7 @@
 
         private System.Windows.Forms.PictureBox pictureBoxWorld;
         private System.Windows.Forms.PictureBox pictureBoxBrainView;
+        private System.Windows.Forms.PictureBox pictureBoxGraph;
     }
 }
 

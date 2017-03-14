@@ -35,6 +35,7 @@ namespace NeuralNetwork
             InputLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5));
             HiddenLayer.Weights = new Matrix(OutputNodes, HiddenNodes);
             HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
+            OutputLayer.Output = new Matrix(OutputNodes, 1);
 
             _neuronRadiusDraw = 10;
             _distanceBetweenLayersDraw = 100;

@@ -24,9 +24,11 @@ namespace FoodSeekerNeuralNetwork
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            applicationEngine = ApplicationEngine.GetInstance(new Size(pictureBoxWorld.Width, pictureBoxWorld.Height), new Size(pictureBoxBrainView.Width, pictureBoxBrainView.Height));
+            applicationEngine = ApplicationEngine.GetInstance(pictureBoxWorld.Size,
+                                                              pictureBoxBrainView.Size,
+                                                              pictureBoxGraph.Size);
             timerForDrawing = new Timer();
-            timerForDrawing.Interval = 50;
+            timerForDrawing.Interval = 20;
             timerForDrawing.Tick += TimerForDrawing_Tick;
             timerForLogic = new Timer();
             timerForLogic.Interval = 50;
@@ -47,6 +49,7 @@ namespace FoodSeekerNeuralNetwork
         {
             pictureBoxWorld.Image = applicationEngine.DrawWorld();
             pictureBoxBrainView.Image = applicationEngine.DrawBrain();
+            pictureBoxGraph.Image = applicationEngine.DrawGraph();
         }
 
         private void pictureBoxWorld_Click(object sender, EventArgs e)

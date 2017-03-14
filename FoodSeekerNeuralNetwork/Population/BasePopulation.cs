@@ -11,6 +11,12 @@ namespace Population
         public double Radius { get; set; }
         public Color Color { get; set; }
         public string SpecieType { get; set; }
+        public bool IsAlive { get; set; }
+
+        public BasePopulation()
+        {
+            IsAlive = true;
+        }
     }
 
     public class BaseComparer : IEqualityComparer<BasePopulation>
