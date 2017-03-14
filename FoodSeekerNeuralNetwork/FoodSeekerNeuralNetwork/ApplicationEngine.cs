@@ -68,12 +68,12 @@ namespace FoodSeekerNeuralNetwork
 
             for (int i = 0; i < numberOfAgentsTypeOne; i++)
             {
-                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, _agentsColor[0], typeOneEats));
+                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, _agentsColor[0], typeOneEats, ApplicationSettings.Random));
             }
 
             for (int i = 0; i < numberOfAgentsTypeTwo; i++)
             {
-                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, _agentsColor[1], typeTwoEats));
+                agents.Add(new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, _agentsColor[1], typeTwoEats, ApplicationSettings.Random));
             }
 
             for (int i = 0; i < 10; i++)
@@ -149,7 +149,7 @@ namespace FoodSeekerNeuralNetwork
                 if (!agents[i].IsAlive)
                     continue;
                 agents[i].CheckEyes(allPopulation);
-                agents[i].SendSignalsToBrain();
+                agents[i].TrainTheAgent();
                 agents[i].AgentActivity();
                 agents[i].CheckForFood(food, agents);
             }
@@ -174,7 +174,7 @@ namespace FoodSeekerNeuralNetwork
                 {
                     string networkAsBits = _geneticEvolution.Reproduce(agents.Where(a => a.SpecieType == typeOne).OrderByDescending(a => a.Energy).ToList()[0].GetBrainAsBits(),
                                                                        agents.Where(a => a.SpecieType == typeOne).OrderByDescending(a => a.Energy).ToList()[1].GetBrainAsBits());
-                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, _agentsColor[0], typeOneEats);
+                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeOne, _agentsColor[0], typeOneEats, ApplicationSettings.Random);
                     agent.InsertNewBrainAsBits(networkAsBits);
                     agents.Add(agent);
                 }
@@ -182,7 +182,7 @@ namespace FoodSeekerNeuralNetwork
                 {
                     string networkAsBits = _geneticEvolution.Reproduce(agents.Where(a => a.SpecieType == typeTwo).OrderByDescending(a => a.Energy).ToList()[0].GetBrainAsBits(),
                                                                        agents.Where(a => a.SpecieType == typeTwo).OrderByDescending(a => a.Energy).ToList()[1].GetBrainAsBits());
-                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, _agentsColor[1], typeTwoEats);
+                    Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % bitmapWorld.Width, ApplicationSettings.Random.Next() % bitmapWorld.Height), numberOfEyes, typeTwo, _agentsColor[1], typeTwoEats, ApplicationSettings.Random);
                     agent.InsertNewBrainAsBits(networkAsBits);
                     agents.Add(agent);
                 }

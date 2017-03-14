@@ -70,7 +70,7 @@
             this.Controls.Add(this.pictureBoxBrainView);
             this.Controls.Add(this.pictureBoxWorld);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Agents Evolution";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWorld)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).EndInit();

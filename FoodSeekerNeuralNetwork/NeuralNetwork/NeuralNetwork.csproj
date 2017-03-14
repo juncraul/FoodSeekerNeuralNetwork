@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Layer.cs" />
     <Compile Include="Network.cs" />
-    <Compile Include="NetworkSpiking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

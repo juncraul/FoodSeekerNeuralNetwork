@@ -21,7 +21,7 @@ namespace NeuralNetwork
         private int _startXDraw;
         private int _startYDraw;
 
-        public void InitializeNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate)
+        public void InitializeNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate, Random rand)
         {
             InputNodes = inputNodes;
             HiddenNodes = hiddenNodes;
@@ -32,9 +32,9 @@ namespace NeuralNetwork
             OutputLayer = new Layer();
 
             InputLayer.Weights = new Matrix(HiddenNodes, InputNodes);
-            InputLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5));
+            InputLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(HiddenNodes, -0.5), Math.Pow(HiddenNodes, -0.5), rand);
             HiddenLayer.Weights = new Matrix(OutputNodes, HiddenNodes);
-            HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5));
+            HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5), rand);
             OutputLayer.Output = new Matrix(OutputNodes, 1);
 
             _neuronRadiusDraw = 10;

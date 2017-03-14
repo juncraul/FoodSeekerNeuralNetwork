@@ -27,7 +27,7 @@ namespace Population
 
         private Matrix previousSensorMatrix;
 
-        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies)
+        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand)
         {
             Energy = 100;
             Position = position;
@@ -42,7 +42,7 @@ namespace Population
             _rotationSpeed = 0.2f;
             _thrustSpeed = 3;
             _network = new Network();
-            _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f);
+            _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f, rand);
             SpecieType = specieType;
             EatsOtherSpecies = eatsOtherSpecies;
         }
@@ -74,84 +74,27 @@ namespace Population
             }
         }
 
-        public void SendSignalsToBrain()
+        public void TrainTheAgent()
         {
-            bool hasFoodInFront = false;
             Matrix sensorMatrix = new Matrix(_eyesCount, 1);
-            bool[] foodPosition = new bool[_eyesCount];
             for(int i = 0; i < _eyesCount; i ++)
             {
-                foodPosition[i] = false;
                 if (_eyeSees[i] == null) continue;
-                if(_eyeSees[i].Color == Color.Red)
-                {
-                    sensorMatrix.TheMatrix[i, 0] = 0.3f;
-                    if(EatsOtherSpecies.Contains(_eyeSees[i].SpecieType))
-                    {
-                        hasFoodInFront = true;
-                        foodPosition[i] = true;
-                    }
-                } else if(_eyeSees[i].Color == Color.GreenYellow)
-                {
-                    sensorMatrix.TheMatrix[i, 0] = 0.6f;
-                    if (EatsOtherSpecies.Contains(_eyeSees[i].SpecieType))
-                    {
-                        hasFoodInFront = true;
-                        foodPosition[i] = true;
-                    }
-                }
-                else if (_eyeSees[i].Color == Color.Blue)
-                {
-                    sensorMatrix.TheMatrix[i, 0] = 0.9f;
-                }
-                else
-                {
-                    sensorMatrix.TheMatrix[i, 0] = 0.0f;
-                }
+                int colourValue = _eyeSees[i].Color.R * 255 * 255 + _eyeSees[i].Color.G * 255 + _eyeSees[i].Color.B;
+                sensorMatrix.TheMatrix[i, 0] = colourValue / (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
             }
-
-            Matrix expectedResonse = GetExpectedOutput(hasFoodInFront, foodPosition);
-
-            Matrix actualResponse = _network.TrainNetwrok(sensorMatrix, expectedResonse);
+            Matrix actualResponse;
+            actualResponse = _network.QueryNetwrok(sensorMatrix);
             previousSensorMatrix = sensorMatrix;
 
             _directionRadian += (actualResponse.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
-            _speed = actualResponse.TheMatrix[1, 0] * _thrustSpeed;
-
-            //if(brainResponse.TheMatrix[0, 0] > brainResponse.TheMatrix[1, 0])
-            //    Color = Color.Chocolate;
-
-            //if (actualResponse.TheMatrix[2, 0] < 0)
-            //    Color = Color.Chocolate;
+            _speed = (actualResponse.TheMatrix[1, 0] * 2 - 1) * _thrustSpeed;
         }
 
         public void AgentActivity()
         {
             Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
             Energy-= _energyDecay;
-        }
-
-        public Matrix GetExpectedOutput(bool hasFoodInFront, bool[] foodPosition)
-        {
-            Matrix expectedOutput = new Matrix(2, 1);
-
-            if(hasFoodInFront)
-            {
-                double delta = 0;
-                for(int i = 0; i < foodPosition.Length; i ++)
-                {
-                    delta += foodPosition[i] ? (i < foodPosition.Length / 2 ? 0.02f : -0.02f) : 0;
-                }
-                expectedOutput.TheMatrix[0, 0] = 0.5f + delta;
-                expectedOutput.TheMatrix[1, 0] = 1;
-            }
-            else
-            {
-                expectedOutput.TheMatrix[0, 0] = 1;
-                expectedOutput.TheMatrix[1, 0] = 0;
-            }
-
-            return expectedOutput;
         }
 
         public void CheckForFood(List<Food> food, List<Agent> agents)

@@ -8,7 +8,6 @@ namespace Mathematics
         public int Lines { get; set; }
         public int Columns { get; set; }
 
-
         public Matrix(int lines, int columns)
         {
             Lines = lines;
@@ -16,9 +15,8 @@ namespace Mathematics
             TheMatrix = new double[Lines, Columns];
         }
 
-        public void GenerateRandomValuesBetween(double a, double b)
+        public void GenerateRandomValuesBetween(double a, double b, Random rand)
         {
-            Random rand = new Random(0);
             for (int i = 0; i < Lines; i++)
                 for (int j = 0; j < Columns; j++)
                     TheMatrix[i, j] = rand.NextDouble() * (b - a) + a;
