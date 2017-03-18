@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Mathematics.Test
 {
@@ -172,6 +173,7 @@ namespace Mathematics.Test
         public void GenerateRandomValuesBetween_Test()
         {
             Matrix a = new Matrix(2, 3);
+            Random random = new Random(0);
 
             a.TheMatrix[0, 0] = 0;
             a.TheMatrix[0, 1] = 0;
@@ -179,7 +181,7 @@ namespace Mathematics.Test
             a.TheMatrix[1, 0] = 0;
             a.TheMatrix[1, 1] = 0;
             a.TheMatrix[1, 2] = 0;
-            a.GenerateRandomValuesBetween(0.2f, 1.0f);
+            a.GenerateRandomValuesBetween(0.2f, 1.0f, random);
 
             Assert.AreNotEqual(a.TheMatrix[0, 0], 0);
             Assert.AreNotEqual(a.TheMatrix[0, 1], 0);

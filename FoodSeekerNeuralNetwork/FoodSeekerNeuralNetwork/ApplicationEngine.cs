@@ -59,11 +59,12 @@ namespace FoodSeekerNeuralNetwork
             bitmapGraph = new Bitmap(graphCanvasSize.Width, graphCanvasSize.Height);
             graphicsGraph = Graphics.FromImage(bitmapGraph);
 
-            types = new List<string>();
-            types.Add("Zero");
-            types.Add("One");
-            types.Add("Two");
-
+            types = new List<string>
+            {
+                "Zero",
+                "One",
+                "Two"
+            };
             typeOneEats.Add(types[0]);
             typeTwoEats.Add(types[1]);
             _agentsColor.Add(Color.Red);
@@ -84,12 +85,12 @@ namespace FoodSeekerNeuralNetwork
                 GenerateFood();
             }
 
-            evolutionGraph = new Graph(200, 500, numberOfAgentsTypeTwo > 0 ? 2 : 1, _agentsColor);
+            evolutionGraph = new Graph(200, 500, 2, _agentsColor);
         }
 
         public static ApplicationEngine GetInstance(Size worldCanvasSize, Size brainCanvasSize, Size graphCanvasSize)
         {
-            return _applicationEngineInstance = (_applicationEngineInstance == null ? new ApplicationEngine(worldCanvasSize, brainCanvasSize, graphCanvasSize) : _applicationEngineInstance);
+            return _applicationEngineInstance = (_applicationEngineInstance ?? new ApplicationEngine(worldCanvasSize, brainCanvasSize, graphCanvasSize));
         }
 
         public Bitmap DrawWorld()
@@ -139,8 +140,7 @@ namespace FoodSeekerNeuralNetwork
             {
                 ticksIntoGeneration = 0;
                 evolutionGraph.AddPoint(0, fitnessThisGenerationPrey / ticksForGeneration / numberOfAgentsTypeOne);
-                if (numberOfAgentsTypeTwo > 0)
-                    evolutionGraph.AddPoint(1, fitnessThisGenerationPredator / ticksForGeneration / numberOfAgentsTypeTwo);
+                evolutionGraph.AddPoint(1, agents.Where(a => a.SpecieType == types[1]).Sum(a => a.FoodAte));
                 fitnessThisGenerationPrey = 0;
                 fitnessThisGenerationPredator = 0;
             }

@@ -28,7 +28,7 @@ namespace Mathematics
 
         public static bool CirclesCollision(Vector2 circle0Origin, double circle0Radius, Vector2 circle1Origin, double circle1Radius)
         {
-            return DistanceBetweenTwoPoints(circle0Origin, circle1Origin) < circle0Radius + circle1Radius;
+            return DistanceBetweenTwoPoints(circle0Origin, circle1Origin) <= circle0Radius + circle1Radius;
         }
 
         public static double DistanceBetweenTwoPoints(Vector2 point0, Vector2 point1)
@@ -38,7 +38,7 @@ namespace Mathematics
 
         public static bool CollisionPointCircle(Vector2 point, Vector2 circleOrigin, double circleRadius)
         {
-            return circleRadius > DistanceBetweenTwoPoints(point, circleOrigin);
+            return circleRadius >= DistanceBetweenTwoPoints(point, circleOrigin);
         }
 
         public static string ToBin(int value, int len)

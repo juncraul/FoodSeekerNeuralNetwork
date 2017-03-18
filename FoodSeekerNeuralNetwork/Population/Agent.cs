@@ -33,7 +33,7 @@ namespace Population
             Energy = 100;
             Position = position;
             Radius = 10;
-            _energyDecay = 0.75;
+            _energyDecay = 0.25;
             Color = color;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
@@ -96,6 +96,7 @@ namespace Population
         {
             Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
             Energy-= _energyDecay;
+            _energyDecay += 0.001;
         }
 
         public void CheckForFood(List<Food> food, List<Agent> agents)
