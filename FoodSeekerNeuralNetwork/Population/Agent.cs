@@ -10,6 +10,7 @@ namespace Population
     {
         public double Energy { get; set; }
         public bool IsSelected { get; set; }
+        public int FoodAte { get; set; }
 
         public readonly List<string> EatsOtherSpecies;
 
@@ -31,16 +32,16 @@ namespace Population
         {
             Energy = 100;
             Position = position;
-            Radius = 20;
+            Radius = 10;
             _energyDecay = 0.75;
             Color = color;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
-            _eyeLength = 30;
+            _eyeLength = 20;
             _eyesRadius = Math.PI / 2;//90 degree
             _distanceBetweenEyes = _eyesRadius / _eyesCount;
             _rotationSpeed = 0.2f;
-            _thrustSpeed = 3;
+            _thrustSpeed = 6;
             _network = new Network();
             _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f, rand);
             SpecieType = specieType;
@@ -105,6 +106,7 @@ namespace Population
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
                 {
+                    FoodAte++;
                     Energy += food[i].FoodValue;
                     food[i].IsAlive = false;
                 }
@@ -118,6 +120,7 @@ namespace Population
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, agents[i].Position, agents[i].Radius))
                 {
+                    FoodAte++;
                     Energy += agents[i].Energy / 2;
                     agents[i].IsAlive = false;
                 }

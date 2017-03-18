@@ -56,25 +56,25 @@ namespace GeneticProgramming
             return parent0.Substring(0, crossoverPivot) + parent1.Substring(crossoverPivot);
         }
 
-        //public string Roulette(float total_fitness, chromo_typ[] Population)
-        //{
-        //    //generate a random number between 0 & total fitness count
-        //    float Slice = (float)(_random.NextDouble() * total_fitness);
+        public int Roulette(double[] fitness)
+        {
+            double totalFitness = fitness.Sum(a=>a);
 
-        //    //go through the chromosones adding up the fitness so far
-        //    float FitnessSoFar = 0.0f;
+            //generate a random number between 0 & total fitness count
+            double slice = (float)(_random.NextDouble() * totalFitness);
 
-        //    for (int i = 0; i < Population.Length; i++)
-        //    {
-        //        FitnessSoFar += Population[i].fitness;
+            //go through the chromosones adding up the fitness so far
+            double fitnessSoFar = 0.0f;
 
-        //        //if the fitness so far > random number return the chromo at this point
-        //        if (FitnessSoFar >= Slice)
+            for (int i = 0; i < fitness.Length; i++)
+            {
+                fitnessSoFar += fitness[i];
 
-        //            return Population[i].bits;
-        //    }
-
-        //    return "";
-        //}
+                //if the fitness so far > random number return the chromo at this point
+                if (fitnessSoFar >= slice)
+                    return i;
+            }
+            return -1;
+        }
     }
 }

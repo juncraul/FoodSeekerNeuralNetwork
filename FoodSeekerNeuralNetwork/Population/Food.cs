@@ -13,7 +13,7 @@ namespace Population
         {
             FoodValue = 100;
             Position = position;
-            Radius = 10;
+            Radius = 5;
             Color = color;
             SpecieType = specieType;
         }
