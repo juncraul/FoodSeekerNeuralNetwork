@@ -57,7 +57,7 @@ namespace Mathematics
 
             brush.Color = Color.Black;
             int ysegments = 5;
-            int yUnit = (int)(MaxY / ysegments - MaxY / ysegments % 10);
+            int yUnit = (int)(MaxY / ysegments - MaxY / ysegments % 5);
             for (int i = 0; i <= ysegments; i++)
             {
                 string text = (i * yUnit).ToString();

@@ -6,6 +6,13 @@ using System.Drawing;
 
 namespace Population
 {
+    public enum AgentSettings
+    {
+        None = 0,
+        DontDecay = 1,
+        ShowFootAte = 2
+    }
+
     public class Agent : BasePopulation
     {
         public double Energy { get; set; }
@@ -28,11 +35,10 @@ namespace Population
         private double _maxEnergy;
 
         private Matrix previousSensorMatrix;
+        private AgentSettings _agentSettings;
 
-        private int _tempA;
-        private int _tempB;
 
-        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand)
+        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
         {
             _maxEnergy = 1000;
             Energy = 100;
@@ -51,6 +57,7 @@ namespace Population
             _network.InitializeNetwork(_eyesCount + 1, 15, 2, 0.3f, rand);
             SpecieType = specieType;
             EatsOtherSpecies = eatsOtherSpecies;
+            _agentSettings = agentSettings;
         }
 
         public void CheckEyes(List<BasePopulation> items)
@@ -99,15 +106,16 @@ namespace Population
             _directionRadian += (actualResponse.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
             _speed = (actualResponse.TheMatrix[1, 0] //* 2 - 1
                 ) * _thrustSpeed;
-            _tempB++;
         }
 
         public void AgentActivity()
         {
             Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
-            Energy-= _energyDecay;
-            _energyDecay += 0.001;
-            _tempA++;
+            if(!_agentSettings.HasFlag(AgentSettings.DontDecay))
+            {
+                Energy-= _energyDecay;
+                _energyDecay += 0.001;
+            }
         }
 
         public void CheckForFood(List<Food> food, List<Agent> agents)
@@ -160,7 +168,15 @@ namespace Population
                 graphics.DrawLine(pen, (int)Position.X, bitmap.Height - (int)Position.Y, (int)(Position + direction).X, bitmap.Height - (int)(Position + direction).Y);
             }
 
-            string text = "E:" + (int)Energy;
+            string text;
+            if (_agentSettings.HasFlag(AgentSettings.ShowFootAte))
+            {
+                text = "Ate:" + FoodAte;
+            }
+            else
+            {
+                text = "E:" + (int)Energy;
+            }
 
             brush.Color = Color.Black;
             graphics.DrawString(text, new Font("Consolas", 8), brush, (int)Position.X + 20, (int)(bitmap.Height - Position.Y));

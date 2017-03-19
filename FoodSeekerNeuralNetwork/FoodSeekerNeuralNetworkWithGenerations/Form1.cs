@@ -53,10 +53,7 @@ namespace FoodSeekerNeuralNetworkWithGenerations
         {
             lock (thisLock)
             {
-                applicationEngine.DoLogic();
-                pictureBoxWorld.Image = applicationEngine.DrawWorld();
-                pictureBoxBrainView.Image = applicationEngine.DrawBrain();
-                pictureBoxGraph.Image = applicationEngine.DrawGraph();
+                DoStuff();
                 // re-enable the timer
                 UpdateTimer.Change(10, Timeout.Infinite);
             }
@@ -76,6 +73,7 @@ namespace FoodSeekerNeuralNetworkWithGenerations
             pictureBoxWorld.Image = applicationEngine.DrawWorld();
             pictureBoxBrainView.Image = applicationEngine.DrawBrain();
             pictureBoxGraph.Image = applicationEngine.DrawGraph();
+            labelInfo.Text = applicationEngine.GiveInfo();
         }
 
         private void TimerForDrawing_Tick(object sender, EventArgs e)

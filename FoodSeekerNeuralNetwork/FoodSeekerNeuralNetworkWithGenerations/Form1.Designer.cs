@@ -36,6 +36,7 @@
             this.pictureBoxGraph = new System.Windows.Forms.PictureBox();
             this.pictureBoxBrainView = new System.Windows.Forms.PictureBox();
             this.pictureBoxWorld = new System.Windows.Forms.PictureBox();
+            this.labelInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBrainView)).BeginInit();
@@ -112,12 +113,23 @@
             this.pictureBoxWorld.Size = new System.Drawing.Size(724, 581);
             this.pictureBoxWorld.TabIndex = 8;
             this.pictureBoxWorld.TabStop = false;
+            this.pictureBoxWorld.Click += new System.EventHandler(this.pictureBoxWorld_Click);
+            // 
+            // labelInfo
+            // 
+            this.labelInfo.AutoSize = true;
+            this.labelInfo.Location = new System.Drawing.Point(824, 646);
+            this.labelInfo.Name = "labelInfo";
+            this.labelInfo.Size = new System.Drawing.Size(35, 13);
+            this.labelInfo.TabIndex = 16;
+            this.labelInfo.Text = "label1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1219, 837);
+            this.Controls.Add(this.labelInfo);
             this.Controls.Add(this.buttonNextFrame);
             this.Controls.Add(this.buttonResume);
             this.Controls.Add(this.buttonStop);
@@ -148,6 +160,7 @@
         private System.Windows.Forms.PictureBox pictureBoxGraph;
         private System.Windows.Forms.PictureBox pictureBoxBrainView;
         private System.Windows.Forms.PictureBox pictureBoxWorld;
+        private System.Windows.Forms.Label labelInfo;
     }
 }
 
