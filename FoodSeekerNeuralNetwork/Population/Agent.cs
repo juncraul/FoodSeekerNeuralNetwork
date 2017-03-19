@@ -25,15 +25,20 @@ namespace Population
         private double _thrustSpeed;
         private double _speed;
         private double _energyDecay;
+        private double _maxEnergy;
 
         private Matrix previousSensorMatrix;
 
+        private int _tempA;
+        private int _tempB;
+
         public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand)
         {
+            _maxEnergy = 1000;
             Energy = 100;
             Position = position;
             Radius = 10;
-            _energyDecay = 0.25;
+            _energyDecay = 0.15;
             Color = color;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
@@ -43,7 +48,7 @@ namespace Population
             _rotationSpeed = 0.2f;
             _thrustSpeed = 6;
             _network = new Network();
-            _network.InitializeNetwork(_eyesCount, 15, 2, 0.3f, rand);
+            _network.InitializeNetwork(_eyesCount + 1, 15, 2, 0.3f, rand);
             SpecieType = specieType;
             EatsOtherSpecies = eatsOtherSpecies;
         }
@@ -77,19 +82,24 @@ namespace Population
 
         public void TrainTheAgent()
         {
-            Matrix sensorMatrix = new Matrix(_eyesCount, 1);
+            Matrix sensorMatrix = new Matrix(_eyesCount + 1, 1);
             for(int i = 0; i < _eyesCount; i ++)
             {
                 if (_eyeSees[i] == null) continue;
                 int colourValue = _eyeSees[i].Color.R * 255 * 255 + _eyeSees[i].Color.G * 255 + _eyeSees[i].Color.B;
                 sensorMatrix.TheMatrix[i, 0] = colourValue / (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
             }
+
+            sensorMatrix.TheMatrix[_eyesCount, 0] = Energy / _maxEnergy;
+
             Matrix actualResponse;
             actualResponse = _network.QueryNetwrok(sensorMatrix);
             previousSensorMatrix = sensorMatrix;
 
             _directionRadian += (actualResponse.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
-            _speed = (actualResponse.TheMatrix[1, 0] * 2 - 1) * _thrustSpeed;
+            _speed = (actualResponse.TheMatrix[1, 0] //* 2 - 1
+                ) * _thrustSpeed;
+            _tempB++;
         }
 
         public void AgentActivity()
@@ -97,6 +107,7 @@ namespace Population
             Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
             Energy-= _energyDecay;
             _energyDecay += 0.001;
+            _tempA++;
         }
 
         public void CheckForFood(List<Food> food, List<Agent> agents)
@@ -126,6 +137,8 @@ namespace Population
                     agents[i].IsAlive = false;
                 }
             }
+            if (Energy > _maxEnergy)
+                Energy = _maxEnergy;
         }
 
         public void DrawAgent(Graphics graphics, Bitmap bitmap)

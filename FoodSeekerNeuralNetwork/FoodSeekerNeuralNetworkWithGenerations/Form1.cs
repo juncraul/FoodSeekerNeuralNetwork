@@ -1,16 +1,15 @@
-﻿using Population;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Threading;
 
-namespace FoodSeekerNeuralNetwork
+namespace FoodSeekerNeuralNetworkWithGenerations
 {
     public partial class Form1 : Form
     {
@@ -93,7 +92,7 @@ namespace FoodSeekerNeuralNetwork
             {
                 applicationEngine.SelectAgent(new Point(mouseEventArgs.X, pictureBoxWorld.Height - mouseEventArgs.Y));
             }
-            
+
         }
 
         private void trackBarSpeed_Scroll(object sender, EventArgs e)

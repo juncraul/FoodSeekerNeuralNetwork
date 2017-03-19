@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FoodSeekerNeuralNetwork
+namespace FoodSeekerNeuralNetworkWithGenerations
 {
     public static class ApplicationSettings
     {

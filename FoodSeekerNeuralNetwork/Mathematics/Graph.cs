@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FoodSeekerNeuralNetwork
+namespace Mathematics
 {
     public class Graph
     {
@@ -26,7 +26,7 @@ namespace FoodSeekerNeuralNetwork
             _numberofLines = numberofLines;
             _points = new List<List<double>>();
             _color = color;
-            for (int i = 0; i < _numberofLines; i ++)
+            for (int i = 0; i < _numberofLines; i++)
             {
                 _points.Add(new List<double>());
             }
@@ -37,7 +37,6 @@ namespace FoodSeekerNeuralNetwork
             if (line >= _numberofLines || line < 0)
                 throw new Exception("line needs to be between 0 and " + _numberofLines);
 
-            //_points[line].Add(new PointF(_points[line].Count * 10, _bitmap.Height - (float)value));
             _points[line].Add(value);
         }
 
@@ -48,7 +47,7 @@ namespace FoodSeekerNeuralNetwork
             graphics.DrawLine(pen, new PointF(_xOffset, bitmap.Height - _yOffset), new PointF(_xOffset, _yOffset));
             graphics.DrawLine(pen, new PointF(_xOffset, bitmap.Height - _yOffset), new PointF(bitmap.Width - _xOffset, bitmap.Height - _yOffset));
 
-            for(int i = 0; i < _points.Count; i ++)
+            for (int i = 0; i < _points.Count; i++)
             {
                 if (_points[i].Count <= 1)
                     continue;
@@ -59,7 +58,7 @@ namespace FoodSeekerNeuralNetwork
             brush.Color = Color.Black;
             int ysegments = 5;
             int yUnit = (int)(MaxY / ysegments - MaxY / ysegments % 10);
-            for(int i = 0; i <= ysegments; i ++)
+            for (int i = 0; i <= ysegments; i++)
             {
                 string text = (i * yUnit).ToString();
                 graphics.DrawString(text, new Font("Consolas", 8), brush, 0, (int)(bitmap.Height - _yOffset - (i * ((bitmap.Height - 2 * _yOffset) / ysegments))));
@@ -77,9 +76,9 @@ namespace FoodSeekerNeuralNetwork
         {
             Resize(bitmap);
             PointF[] points = new PointF[lines.Count];
-            for(int i = 0; i < lines.Count; i ++)
+            for (int i = 0; i < lines.Count; i++)
             {
-                points[i] = new PointF(_xOffset + i * (bitmap.Width - _xOffset * 2) / MaxX, 
+                points[i] = new PointF(_xOffset + i * (bitmap.Width - _xOffset * 2) / MaxX,
                     bitmap.Height - _yOffset - (float)(lines[i] * (bitmap.Height - _yOffset * 2) / MaxY));
             }
             return points;

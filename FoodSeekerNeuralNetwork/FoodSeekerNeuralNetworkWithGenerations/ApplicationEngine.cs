@@ -1,12 +1,14 @@
-﻿using Mathematics;
+﻿using GeneticProgramming;
+using Mathematics;
 using Population;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GeneticProgramming;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FoodSeekerNeuralNetwork
+namespace FoodSeekerNeuralNetworkWithGenerations
 {
     public class ApplicationEngine
     {
@@ -19,7 +21,7 @@ namespace FoodSeekerNeuralNetwork
 
         Bitmap bitmapBrain;
         Graphics graphicsBrain;
-        
+
         Bitmap bitmapGraph;
         Graphics graphicsGraph;
 
@@ -28,7 +30,7 @@ namespace FoodSeekerNeuralNetwork
         DateTime timeWhenApplicationStarted;
         DateTime lastTimeFoodWasGenerated;
 
-        
+
         int numberOfEyes = 16;
         List<string> types = new List<string>();
         Color colorZero = Color.GreenYellow;
@@ -112,7 +114,7 @@ namespace FoodSeekerNeuralNetwork
         {
             SolidBrush brush = new SolidBrush(Color.White);
             graphicsBrain.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
-            Agent agent = agents.Where(a =>a.IsSelected).FirstOrDefault();
+            Agent agent = agents.Where(a => a.IsSelected).FirstOrDefault();
             if (agent == null)
                 agent = agents.FirstOrDefault();
             agent.DrawBrain(graphicsBrain, bitmapBrain);
@@ -124,7 +126,7 @@ namespace FoodSeekerNeuralNetwork
         {
             SolidBrush brush = new SolidBrush(Color.White);
             graphicsGraph.FillRectangle(brush, new Rectangle(0, 0, bitmapGraph.Width, bitmapGraph.Height));
-            
+
             evolutionGraph.Draw(graphicsGraph, bitmapGraph);
 
             return bitmapGraph;
@@ -185,7 +187,7 @@ namespace FoodSeekerNeuralNetwork
 
         public void GenerateAgent(int agentId, bool isCrossoverAgent)
         {
-            Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Width, ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Height), 
+            Agent agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Width, ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Height),
                                                 numberOfEyes, types[agentId], _agentsColor[agentId - 1], agentId == 1 ? typeOneEats : typeTwoEats, ApplicationSettings.Random);
             if (isCrossoverAgent)
             {
@@ -195,7 +197,7 @@ namespace FoodSeekerNeuralNetwork
                     return;
                 }
                 int indexParent0 = _geneticEvolution.Roulette(agents.Where(a => a.SpecieType == types[agentId])
-                                                                    .Select(a=>a.Energy + a.FoodAte * ApplicationSettings.ScoreForEatingFood).ToArray());
+                                                                    .Select(a => a.Energy + a.FoodAte * ApplicationSettings.ScoreForEatingFood).ToArray());
                 int indexParent1 = _geneticEvolution.Roulette(agents.Where(a => a.SpecieType == types[agentId])
                                                                     .Select(a => a.Energy + a.FoodAte * ApplicationSettings.ScoreForEatingFood).ToArray());
                 string networkAsBits = _geneticEvolution.Reproduce(agents[indexParent0].GetBrainAsBits(),
@@ -222,7 +224,7 @@ namespace FoodSeekerNeuralNetwork
 
             foreach (Agent a in agents)
             {
-                if(Functions.CollisionPointCircle(new Vector2(p.X, p.Y), a.Position, a.Radius))
+                if (Functions.CollisionPointCircle(new Vector2(p.X, p.Y), a.Position, a.Radius))
                 {
                     a.IsSelected = true;
                     break;

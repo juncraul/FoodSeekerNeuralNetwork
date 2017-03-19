@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4684D282-5D89-482C-96C3-47644FBEA3C1}</ProjectGuid>
+    <ProjectGuid>{9E59FE3A-B0AB-4D0B-B8D8-61EF57AC6193}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FoodSeekerNeuralNetwork</RootNamespace>
-    <AssemblyName>FoodSeekerNeuralNetwork</AssemblyName>
+    <RootNamespace>FoodSeekerNeuralNetworkWithGenerations</RootNamespace>
+    <AssemblyName>FoodSeekerNeuralNetworkWithGenerations</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -83,24 +82,17 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeneticProgramming\GeneticProgramming.csproj">
-      <Project>{d1b9c6ea-226c-47bd-ab42-8253ba548f43}</Project>
+      <Project>{D1B9C6EA-226C-47BD-AB42-8253BA548F43}</Project>
       <Name>GeneticProgramming</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mathematics\Mathematics.csproj">
-      <Project>{769a5e81-3b29-44d3-a598-0b8fea1e48bf}</Project>
+      <Project>{769A5E81-3B29-44D3-A598-0B8FEA1E48BF}</Project>
       <Name>Mathematics</Name>
     </ProjectReference>
     <ProjectReference Include="..\Population\Population.csproj">
-      <Project>{4008f9f2-5fba-419c-9b59-a3a097a5c4f2}</Project>
+      <Project>{4008F9F2-5FBA-419C-9B59-A3A097A5C4F2}</Project>
       <Name>Population</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
