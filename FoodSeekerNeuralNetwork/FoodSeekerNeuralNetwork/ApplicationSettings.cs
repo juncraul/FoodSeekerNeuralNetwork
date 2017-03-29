@@ -10,9 +10,10 @@ namespace FoodSeekerNeuralNetwork
         public static float MutationRate = 0.07f;
         public static float CrossOverRate = 0.7f;
         public static float ScoreForEatingFood = 50;
-        public static Size SpawningSpace = new Size(500, 500);
+        public static Size SpawningSpace = new Size(724, 581);
         public static int NumberOfAgentsTypeOne = (int)((SpawningSpace.Width + SpawningSpace.Height) / 100);
         public static int NumberOfAgentsTypeTwo = 0;
         public static int GenerateFoodMilliseconds = 500;
+        public static int FoodOnScreen = 30;
     }
 }

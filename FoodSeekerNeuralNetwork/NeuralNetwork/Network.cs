@@ -1,6 +1,7 @@
 ﻿using Mathematics;
 using System;
 using System.Drawing;
+using System.Linq;
 
 namespace NeuralNetwork
 {
@@ -15,11 +16,14 @@ namespace NeuralNetwork
         private Layer HiddenLayer { get; set; }
         private Layer OutputLayer { get; set; }
 
+        Matrix _lastInput;
+
         private int _neuronRadiusDraw;
         private int _distanceBetweenLayersDraw;
         private int _distanceBetweenNeuronsDraw;
         private int _startXDraw;
         private int _startYDraw;
+        private int _maxNrNeuronsOnLevel;
 
         public void InitializeNetwork(int inputNodes, int hiddenNodes, int outputNodes, float learningRate, Random rand)
         {
@@ -37,11 +41,13 @@ namespace NeuralNetwork
             HiddenLayer.Weights.GenerateRandomValuesBetween(-Math.Pow(OutputNodes, -0.5), Math.Pow(OutputNodes, -0.5), rand);
             OutputLayer.Output = new Matrix(OutputNodes, 1);
 
-            _neuronRadiusDraw = 10;
+            _neuronRadiusDraw = 6;
             _distanceBetweenLayersDraw = 100;
-            _distanceBetweenNeuronsDraw = 10;
-            _startXDraw = 10;
+            _distanceBetweenNeuronsDraw = 5;
+            _startXDraw = 40;
             _startYDraw = 10;
+            int[] array = { inputNodes, hiddenNodes, outputNodes };
+            _maxNrNeuronsOnLevel = array.Max(a => a);
         }
 
         public Matrix TrainNetwrok(Matrix inputs, Matrix target)
@@ -69,6 +75,7 @@ namespace NeuralNetwork
 
         public Matrix QueryNetwrok(Matrix inputs)
         {
+            _lastInput = inputs;
             InputLayer.Output = InputLayer.Weights * inputs;
 
             for (int i = 0; i < HiddenNodes; i++)
@@ -92,46 +99,72 @@ namespace NeuralNetwork
             SolidBrush brush = new SolidBrush(Color.Yellow);
             Pen pen = new Pen(Color.Black);
 
+            int diameter = _neuronRadiusDraw * 2;
+            int ySpacePerNeuron = (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw);
+            int yOffset0 = _startYDraw + _neuronRadiusDraw + (_maxNrNeuronsOnLevel - InputNodes) / 2 * ySpacePerNeuron;
+            int yOffset1 = _startYDraw + _neuronRadiusDraw + (_maxNrNeuronsOnLevel - HiddenNodes) / 2 * ySpacePerNeuron;
+            int xOffset0 = _startXDraw + _neuronRadiusDraw;
+            int xOffset1 = _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw;
             for (int i = 0; i < InputLayer.Weights.Columns; i++)
             {
                 for (int j = 0; j < InputLayer.Weights.Lines; j++)
                 {
                     pen.Width = (int)(Math.Abs(InputLayer.Weights.TheMatrix[j, i]) * 5);
                     pen.Color = InputLayer.Weights.TheMatrix[j, i] < 0 ? Color.Red : Color.Blue;
-                    graphics.DrawLine(pen, _startXDraw + _neuronRadiusDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + 10)) + _neuronRadiusDraw,
-                                           _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw, (_startYDraw + j * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw);
+                    graphics.DrawLine(pen, xOffset0, yOffset0 + i * ySpacePerNeuron,
+                                           xOffset1, yOffset1 + j * ySpacePerNeuron);
                 }
             }
 
+            ySpacePerNeuron = (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw);
+            yOffset0 = _startYDraw + _neuronRadiusDraw + (_maxNrNeuronsOnLevel - HiddenNodes) / 2 * ySpacePerNeuron;
+            yOffset1 = _startYDraw + _neuronRadiusDraw + (_maxNrNeuronsOnLevel - OutputNodes) / 2 * ySpacePerNeuron;
+            xOffset0 = _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw;
+            xOffset1 = _startXDraw + _distanceBetweenLayersDraw * 2 + _neuronRadiusDraw;
             for (int i = 0; i < HiddenLayer.Weights.Columns; i++)
             {
                 for (int j = 0; j < HiddenLayer.Weights.Lines; j++)
                 {
                     pen.Width = (int)(Math.Abs(HiddenLayer.Weights.TheMatrix[j, i]) * 5);
                     pen.Color = HiddenLayer.Weights.TheMatrix[j, i] < 0 ? Color.Red : Color.Blue;
-                    graphics.DrawLine(pen, _startXDraw + _distanceBetweenLayersDraw + _neuronRadiusDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw,
-                                           _startXDraw + _distanceBetweenLayersDraw * 2 + _neuronRadiusDraw, (_startYDraw + j * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)) + _neuronRadiusDraw);
+                    graphics.DrawLine(pen, xOffset0, yOffset0 + i * ySpacePerNeuron,
+                                           xOffset1, yOffset1 + j * ySpacePerNeuron);
                 }
             }
 
+            ySpacePerNeuron = (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw);
+            yOffset0 = _startYDraw + (_maxNrNeuronsOnLevel - InputNodes) / 2 * ySpacePerNeuron;
+            xOffset0 = _startXDraw;
             for (int i = 0; i < InputNodes; i++)
             {
-                graphics.FillEllipse(brush, new Rectangle(_startXDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + 10)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+                brush.Color = Color.Yellow;
+                graphics.FillEllipse(brush, new Rectangle(xOffset0, yOffset0 + i * ySpacePerNeuron, diameter, diameter));
+
+                string text = string.Format("{0:N3}", _lastInput.TheMatrix[i, 0]);
+                brush.Color = Color.Black;
+                graphics.DrawString(text, new Font("Consolas", 8), brush, xOffset0 - 30, yOffset0 + i * ySpacePerNeuron);
             }
 
+            ySpacePerNeuron = (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw);
+            yOffset0 = _startYDraw + (_maxNrNeuronsOnLevel - HiddenNodes) / 2 * ySpacePerNeuron;
+            xOffset0 = _startXDraw + _distanceBetweenLayersDraw;
             for (int i = 0; i < HiddenNodes; i++)
             {
-                graphics.FillEllipse(brush, new Rectangle(_startXDraw + _distanceBetweenLayersDraw, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+                brush.Color = Color.Yellow;
+                graphics.FillEllipse(brush, new Rectangle(xOffset0, yOffset0 + i * ySpacePerNeuron, diameter, diameter));
             }
 
+            ySpacePerNeuron = (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw);
+            yOffset0 = _startYDraw + (_maxNrNeuronsOnLevel - OutputNodes) / 2 * ySpacePerNeuron;
+            xOffset0 = _startXDraw + _distanceBetweenLayersDraw * 2;
             for (int i = 0; i < OutputNodes; i++)
             {
                 brush.Color = Color.Yellow;
-                graphics.FillEllipse(brush, new Rectangle(_startXDraw + _distanceBetweenLayersDraw * 2, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)), (_neuronRadiusDraw * 2), (_neuronRadiusDraw * 2)));
+                graphics.FillEllipse(brush, new Rectangle(xOffset0, yOffset0 + i * ySpacePerNeuron, diameter, diameter));
 
                 string text = string.Format("{0:N3}", OutputLayer.Output.TheMatrix[i, 0]);
                 brush.Color = Color.Black;
-                graphics.DrawString(text, new Font("Consolas", 8), brush, _neuronRadiusDraw * 2 + _startXDraw + _distanceBetweenLayersDraw * 2, (_startYDraw + i * (_neuronRadiusDraw * 2 + _distanceBetweenNeuronsDraw)));
+                graphics.DrawString(text, new Font("Consolas", 8), brush, xOffset0 + _neuronRadiusDraw * 2, yOffset0 + i * ySpacePerNeuron);
             }
         }
 

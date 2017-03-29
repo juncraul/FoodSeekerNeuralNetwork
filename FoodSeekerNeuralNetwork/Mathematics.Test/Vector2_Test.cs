@@ -95,6 +95,7 @@ namespace Mathematics.Test
             Vector2 c = a.Rotate(Math.PI);
             Vector2 d = a.Rotate(3 * Math.PI / 2);
             Vector2 e = a.Rotate(2 * Math.PI);
+            Vector2 f = a.Rotate(0);
 
             Assert.IsTrue(Math.Abs(b.X - -1) <= 0.00001f);
             Assert.IsTrue(Math.Abs(b.Y - 0) <= 0.00001f);
@@ -107,6 +108,9 @@ namespace Mathematics.Test
 
             Assert.IsTrue(Math.Abs(e.X - 0) <= 0.00001f);
             Assert.IsTrue(Math.Abs(e.Y - 1) <= 0.00001f);
+
+            Assert.IsTrue(Math.Abs(f.X - 0) <= 0.00001f);
+            Assert.IsTrue(Math.Abs(f.Y - 1) <= 0.00001f);
         }
     }
 }

@@ -158,8 +158,7 @@ namespace FoodSeekerNeuralNetwork
 
             ReplaceDeadPopulation();
 
-            TimeSpan timeBetweenFoodGeneration = (DateTime.Now - lastTimeFoodWasGenerated);
-            if (timeBetweenFoodGeneration.TotalMilliseconds > ApplicationSettings.GenerateFoodMilliseconds)
+            for (int i = 0; i < ApplicationSettings.FoodOnScreen; i++)
             {
                 GenerateFood();
             }

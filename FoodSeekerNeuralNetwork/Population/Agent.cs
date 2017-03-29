@@ -10,7 +10,8 @@ namespace Population
     {
         None = 0,
         DontDecay = 1,
-        ShowFootAte = 2
+        ShowFoodAte = 2,
+        ShowEnergy = 4,
     }
 
     public class Agent : BasePopulation
@@ -37,6 +38,8 @@ namespace Population
         private Matrix previousSensorMatrix;
         private AgentSettings _agentSettings;
 
+        private Food _closestFood;
+
 
         public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
         {
@@ -52,9 +55,10 @@ namespace Population
             _eyesRadius = Math.PI / 2;//90 degree
             _distanceBetweenEyes = _eyesRadius / _eyesCount;
             _rotationSpeed = 0.2f;
-            _thrustSpeed = 6;
+            _thrustSpeed = 3;
             _network = new Network();
-            _network.InitializeNetwork(_eyesCount + 1, 15, 2, 0.3f, rand);
+            _network.InitializeNetwork(_eyesCount * 2 + 1, 15, 1, 0.3f, rand);
+            //_network.InitializeNetwork(3, 4, 1, 0.3f, rand);
             SpecieType = specieType;
             EatsOtherSpecies = eatsOtherSpecies;
             _agentSettings = agentSettings;
@@ -62,14 +66,16 @@ namespace Population
 
         public void CheckEyes(List<BasePopulation> items)
         {
+            double distance;
+            double minDistance;
             for(int i = 0; i < _eyesCount; i ++)
             {
-                double distance;
-                double minDistance = 1000000;
+                minDistance = 1000000;
                 foreach (BasePopulation b in items)
                 {
                     if (b == this) continue;
-                    Vector2 direction = (new Vector2(-_eyeLength, 0).Rotate(_directionRadian - (Math.PI / 2 - _eyesRadius / 2 + (i * _distanceBetweenEyes))));
+                    if ((b as Agent) != null) continue;
+                    Vector2 direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
                     if (Functions.RayIntersectsCricle(Position, direction, b.Position, b.Radius, out distance))
                     {
                         if(minDistance > distance)
@@ -85,36 +91,66 @@ namespace Population
                 }
 
             }
+
+            minDistance = 1000000;
+            foreach(BasePopulation b in items)
+            {
+                if (b == this) continue;
+                if ((b as Food) == null) continue;
+                distance = Functions.DistanceBetweenTwoPoints(b.Position, Position);
+                if (distance < minDistance)
+                {
+                    _closestFood = b as Food;
+                    minDistance = distance;
+                }
+            }
         }
 
         public void TrainTheAgent()
         {
-            Matrix sensorMatrix = new Matrix(_eyesCount + 1, 1);
-            for(int i = 0; i < _eyesCount; i ++)
+            Matrix sensorMatrix = new Matrix(_eyesCount * 2 + 1, 1);
+            //Matrix sensorMatrix = new Matrix(3, 1);
+            for (int i = 0; i < _eyesCount; i ++)
             {
-                if (_eyeSees[i] == null) continue;
-                int colourValue = _eyeSees[i].Color.R * 255 * 255 + _eyeSees[i].Color.G * 255 + _eyeSees[i].Color.B;
-                sensorMatrix.TheMatrix[i, 0] = colourValue / (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
+                if (_eyeSees[i] != null)
+                {
+                    //int colourValue = _eyeSees[i].Color.R * 255 * 255 + _eyeSees[i].Color.G * 255 + _eyeSees[i].Color.B;
+                    //sensorMatrix.TheMatrix[i * 2, 0] = 0.9; // (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
+                    //sensorMatrix.TheMatrix[i * 2 + 1, 0] = Functions.DistanceBetweenTwoPoints(_eyeSees[i].Position, Position) / 10000.0;
+                    sensorMatrix.TheMatrix[i, 0] = 0.9;
+                }
+                else
+                {
+                    //sensorMatrix.TheMatrix[i * 2, 0] = 0.01;
+                    //sensorMatrix.TheMatrix[i * 2 + 1, 0] = 0.01;
+                    sensorMatrix.TheMatrix[i, 0] = 0.01;
+                }
             }
+            //sensorMatrix.TheMatrix[0, 0] = (Functions.AngleBetweenTwoPoints(Position, _closestFood.Position) + 0.001) / (Math.PI * 2 + 0.002);
+            //sensorMatrix.TheMatrix[1, 0] = Functions.DistanceBetweenTwoPoints(Position, _closestFood.Position) / 1000;
+            //sensorMatrix.TheMatrix[2, 0] = (_directionRadian + 0.001) / (Math.PI * 2 + 0.002);
 
-            sensorMatrix.TheMatrix[_eyesCount, 0] = Energy / _maxEnergy;
+            sensorMatrix.TheMatrix[_eyesCount * 2, 0] = Energy / _maxEnergy;
 
-            Matrix actualResponse;
-            actualResponse = _network.QueryNetwrok(sensorMatrix);
+            Matrix actualOutput;
+            actualOutput = _network.QueryNetwrok(sensorMatrix);
             previousSensorMatrix = sensorMatrix;
 
-            _directionRadian += (actualResponse.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
-            _speed = (actualResponse.TheMatrix[1, 0] //* 2 - 1
-                ) * _thrustSpeed;
+            _directionRadian += (actualOutput.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
+            _speed = //(actualResponse.TheMatrix[1, 0] //* 2 - 1
+                //) * 
+                _thrustSpeed;
+            _directionRadian = (_directionRadian > 0 ? (_directionRadian * 100) % 628 : 628 - (-_directionRadian * 100) % 628) / 100.0;
         }
 
         public void AgentActivity()
         {
-            Position += new Vector2(0, 1).Rotate(_directionRadian) * _speed;
+            Position += new Vector2(1, 0).Rotate(_directionRadian) * _speed;
             if(!_agentSettings.HasFlag(AgentSettings.DontDecay))
             {
                 Energy-= _energyDecay;
-                _energyDecay += 0.001;
+                if (Energy <= 0)
+                    IsAlive = false;
             }
         }
 
@@ -164,18 +200,18 @@ namespace Population
             for (int i = 0; i < _eyesCount; i ++)
             {
                 pen.Color = _eyeSees[i] != null ? _eyeSees[i].Color : Color.Black;
-                Vector2 direction = (new Vector2(-_eyeLength, 0).Rotate(_directionRadian - (Math.PI / 2 - _eyesRadius / 2 + (i * _distanceBetweenEyes))));
+                Vector2 direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
                 graphics.DrawLine(pen, (int)Position.X, bitmap.Height - (int)Position.Y, (int)(Position + direction).X, bitmap.Height - (int)(Position + direction).Y);
             }
 
-            string text;
-            if (_agentSettings.HasFlag(AgentSettings.ShowFootAte))
+            string text = string.Empty;
+            if (_agentSettings.HasFlag(AgentSettings.ShowFoodAte))
             {
-                text = "Ate:" + FoodAte;
+                text = "Ate:" + FoodAte + Environment.NewLine;
             }
-            else
+            if (_agentSettings.HasFlag(AgentSettings.ShowEnergy))
             {
-                text = "E:" + (int)Energy;
+                text = "E:" + (int)Energy + Environment.NewLine;
             }
 
             brush.Color = Color.Black;
@@ -185,6 +221,11 @@ namespace Population
         public void DrawBrain(Graphics graphics, Bitmap bitmap)
         {
             _network.Draw(graphics, bitmap);
+        }
+
+        public double GetFitness(double scoreForEatingFood, double scoreForExisting)
+        {
+            return FoodAte * scoreForEatingFood + scoreForExisting;
         }
 
         public class AgentComparer : IEqualityComparer<BasePopulation>

@@ -97,7 +97,7 @@ namespace FoodSeekerNeuralNetworkWithGenerations
             {
                 f.Draw(graphicsWorld, bitmapWorld);
             }
-            foreach (Agent a in agents)
+            foreach (Agent a in agents.Where(a=>a.IsAlive))
             {
                 a.DrawAgent(graphicsWorld, bitmapWorld);
             }
@@ -141,9 +141,9 @@ namespace FoodSeekerNeuralNetworkWithGenerations
             {
                 if (!agents[i].IsAlive)
                     continue;
+                agents[i].AgentActivity();
                 agents[i].CheckEyes(allPopulation);
                 agents[i].TrainTheAgent();
-                agents[i].AgentActivity();
                 agents[i].CheckForFood(food, agents);
                 food.RemoveAll(f => !f.IsAlive);
             }
@@ -167,18 +167,18 @@ namespace FoodSeekerNeuralNetworkWithGenerations
             food = new List<Food>();
 
             //Keep Elite agents in the new epoch
-            for(int i = 0; i < ApplicationSettings.KeepEliteAgents * ApplicationSettings.NumberOfAgentsTypeOne; i ++)
+            for(int i = 0; i < (int)(ApplicationSettings.KeepEliteAgents * ApplicationSettings.NumberOfAgentsTypeOne); i ++)
             {
                 Agent eliteAgent = oldAgents.OrderByDescending(a => a.FoodAte).ToList()[i];
                 DuplicateAgent(1, eliteAgent);
             }
 
-            for (int i = 0; i < ApplicationSettings.NumberOfAgentsTypeOne; i++)
+            for (int i = agents.Count(a => a.SpecieType == types[1]); i < ApplicationSettings.NumberOfAgentsTypeOne; i++)
             {
                 GenerateAgent(1, true);
             }
 
-            for (int i = 0; i < ApplicationSettings.NumberOfAgentsTypeTwo; i++)
+            for (int i = agents.Count(a => a.SpecieType == types[2]); i < ApplicationSettings.NumberOfAgentsTypeTwo; i++)
             {
                 GenerateAgent(2, true);
             }
@@ -201,9 +201,9 @@ namespace FoodSeekerNeuralNetworkWithGenerations
                     return;
                 }
                 int indexParent0 = _geneticEvolution.Roulette(oldAgents.Where(a => a.SpecieType == types[agentId])
-                                                                    .Select(a => a.FoodAte * ApplicationSettings.ScoreForEatingFood).ToArray());
+                                                                    .Select(a => a.GetFitness(ApplicationSettings.ScoreForEatingFood, ApplicationSettings.ScoreForExisting)).ToArray());
                 int indexParent1 = _geneticEvolution.Roulette(oldAgents.Where(a => a.SpecieType == types[agentId])
-                                                                    .Select(a => a.FoodAte * ApplicationSettings.ScoreForEatingFood).ToArray());
+                                                                    .Select(a => a.GetFitness(ApplicationSettings.ScoreForEatingFood, ApplicationSettings.ScoreForExisting)).ToArray());
                 string networkAsBits = _geneticEvolution.Reproduce(oldAgents[indexParent0].GetBrainAsBits(),
                                                             oldAgents[indexParent1].GetBrainAsBits());
                 agent.InsertNewBrainAsBits(networkAsBits);
@@ -222,8 +222,6 @@ namespace FoodSeekerNeuralNetworkWithGenerations
 
         public void GenerateFood()
         {
-            if (food.Count > agents.Count * 2.5)
-                return;
             food.Add(new Food(new Vector2(ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Width, ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Height), types[0], colorZero));
         }
 

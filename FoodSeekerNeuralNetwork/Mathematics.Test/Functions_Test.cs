@@ -82,5 +82,37 @@ namespace Mathematics.Test
             b = Functions.CollisionPointCircle(p2, s0, 1);
             Assert.AreEqual<bool>(true, b);
         }
+
+        [TestMethod]
+        public void AngleBetweenTwoPoints()
+        {
+            Vector2 p0 = new Vector2(0, 0);
+            Vector2 p1 = new Vector2(1, 0);
+            Vector2 p2 = new Vector2(1, 1);
+            Vector2 p3 = new Vector2(0, 1);
+            Vector2 p4 = new Vector2(-1, 1);
+            Vector2 p5 = new Vector2(-1, 0);
+            Vector2 p6 = new Vector2(-1, -1);
+            Vector2 p7 = new Vector2(0, -1);
+            Vector2 p8 = new Vector2(1, -1);
+
+            double x;
+            x = Functions.AngleBetweenTwoPoints(p0, p1);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 8)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p2);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 1)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p3);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 2)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p4);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 3)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p5);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 4)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p6);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 5)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p7);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 6)) < 0.001);
+            x = Functions.AngleBetweenTwoPoints(p0, p8);
+            Assert.IsTrue(Math.Abs(x - (2 * Math.PI / 8 * 7)) < 0.001);
+        }
     }
 }

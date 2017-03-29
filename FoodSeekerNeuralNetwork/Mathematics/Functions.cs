@@ -45,5 +45,14 @@ namespace Mathematics
         {
             return (len > 1 ? ToBin(value >> 1, len - 1) : null) + "01"[value & 1];
         }
+
+        public static double AngleBetweenTwoPoints(Vector2 point0, Vector2 point1)
+        {
+            Vector2 a = new Vector2(0, 0);
+            Vector2 b = point1 - point0;
+
+            double result = Math.Atan2(a.Y, a.X) - Math.Atan2(b.Y, b.X);
+            return 2 * Math.PI - (result < 0 ? result + 2 * Math.PI : result);
+        }
     }
 }
