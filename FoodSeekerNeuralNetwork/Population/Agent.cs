@@ -18,7 +18,9 @@ namespace Population
     {
         public double Energy { get; set; }
         public bool IsSelected { get; set; }
-        public int FoodAte { get; set; }
+        public int GoodFoodAte { get; set; }
+
+        public int BadFoodAte { get; set; }
 
         public readonly List<string> EatsOtherSpecies;
 
@@ -41,24 +43,24 @@ namespace Population
         private Food _closestFood;
 
 
-        public Agent(Vector2 position, int eyesCount, string specieType, Color color, List<string> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
+        public Agent(Vector2 position, int eyesCount, int hiddenNeurons, string specieType, Color color, List<string> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
         {
-            _maxEnergy = 1000;
+            _maxEnergy = 100;
             Energy = 100;
             Position = position;
             Radius = 10;
-            _energyDecay = 0.15;
+            _energyDecay = 0.35;
             Color = color;
             _eyesCount = eyesCount;
             _eyeSees = new BasePopulation[_eyesCount];
             _eyeLength = 20;
-            _eyesRadius = Math.PI / 2;//90 degree
+            _eyesRadius = Math.PI /2;
             _distanceBetweenEyes = _eyesRadius / _eyesCount;
             _rotationSpeed = 0.2f;
             _thrustSpeed = 3;
             _network = new Network();
-            _network.InitializeNetwork(_eyesCount * 2 + 1, 15, 1, 0.3f, rand);
-            //_network.InitializeNetwork(3, 4, 1, 0.3f, rand);
+            _network.InitializeNetwork(_eyesCount * 2 + 1, hiddenNeurons, 1, 0.3f, rand);
+            //_network.InitializeNetwork(_eyesCount + 1, hiddenNeurons, 1, 0.3f, rand);
             SpecieType = specieType;
             EatsOtherSpecies = eatsOtherSpecies;
             _agentSettings = agentSettings;
@@ -109,21 +111,21 @@ namespace Population
         public void TrainTheAgent()
         {
             Matrix sensorMatrix = new Matrix(_eyesCount * 2 + 1, 1);
-            //Matrix sensorMatrix = new Matrix(3, 1);
+            //Matrix sensorMatrix = new Matrix(_eyesCount + 1, 1);
             for (int i = 0; i < _eyesCount; i ++)
             {
                 if (_eyeSees[i] != null)
                 {
                     //int colourValue = _eyeSees[i].Color.R * 255 * 255 + _eyeSees[i].Color.G * 255 + _eyeSees[i].Color.B;
-                    //sensorMatrix.TheMatrix[i * 2, 0] = 0.9; // (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
-                    //sensorMatrix.TheMatrix[i * 2 + 1, 0] = Functions.DistanceBetweenTwoPoints(_eyeSees[i].Position, Position) / 10000.0;
-                    sensorMatrix.TheMatrix[i, 0] = 0.9;
+                    sensorMatrix.TheMatrix[i * 2, 0] = _eyeSees[i].Color == Color.Gray ? 0.5 : 0.9; // (256.0 * 256.0 * 256.0) * 0.98 + 0.01;
+                    sensorMatrix.TheMatrix[i * 2 + 1, 0] = 1 - Functions.DistanceBetweenTwoPoints(_eyeSees[i].Position, Position) / 10000.0;
+                    //sensorMatrix.TheMatrix[i, 0] = 0.9;
                 }
                 else
                 {
-                    //sensorMatrix.TheMatrix[i * 2, 0] = 0.01;
-                    //sensorMatrix.TheMatrix[i * 2 + 1, 0] = 0.01;
-                    sensorMatrix.TheMatrix[i, 0] = 0.01;
+                    sensorMatrix.TheMatrix[i * 2, 0] = 0.01;
+                    sensorMatrix.TheMatrix[i * 2 + 1, 0] = 0.01;
+                    //sensorMatrix.TheMatrix[i, 0] = 0.01;
                 }
             }
             //sensorMatrix.TheMatrix[0, 0] = (Functions.AngleBetweenTwoPoints(Position, _closestFood.Position) + 0.001) / (Math.PI * 2 + 0.002);
@@ -131,6 +133,7 @@ namespace Population
             //sensorMatrix.TheMatrix[2, 0] = (_directionRadian + 0.001) / (Math.PI * 2 + 0.002);
 
             sensorMatrix.TheMatrix[_eyesCount * 2, 0] = Energy / _maxEnergy;
+            //sensorMatrix.TheMatrix[_eyesCount, 0] = Energy / _maxEnergy;
 
             Matrix actualOutput;
             actualOutput = _network.QueryNetwrok(sensorMatrix);
@@ -162,7 +165,15 @@ namespace Population
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
                 {
-                    FoodAte++;
+                    if (food[i].FoodValue > 0)
+                    {
+                        GoodFoodAte++;
+                    }
+                    else
+                    {
+                        BadFoodAte++;
+                    }
+
                     Energy += food[i].FoodValue;
                     food[i].IsAlive = false;
                 }
@@ -176,7 +187,7 @@ namespace Population
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, agents[i].Position, agents[i].Radius))
                 {
-                    FoodAte++;
+                    GoodFoodAte++;
                     Energy += agents[i].Energy / 2;
                     agents[i].IsAlive = false;
                 }
@@ -207,7 +218,7 @@ namespace Population
             string text = string.Empty;
             if (_agentSettings.HasFlag(AgentSettings.ShowFoodAte))
             {
-                text = "Ate:" + FoodAte + Environment.NewLine;
+                text = "Ate:" + GoodFoodAte + Environment.NewLine;
             }
             if (_agentSettings.HasFlag(AgentSettings.ShowEnergy))
             {
@@ -223,9 +234,10 @@ namespace Population
             _network.Draw(graphics, bitmap);
         }
 
-        public double GetFitness(double scoreForEatingFood, double scoreForExisting)
+        public double GetFitness(double scoreForEatingGoodFood, double scoreForEatingBadFood, double scoreForExisting)
         {
-            return FoodAte * scoreForEatingFood + scoreForExisting;
+            double fitness = GoodFoodAte * scoreForEatingGoodFood + BadFoodAte * scoreForEatingBadFood + scoreForExisting + (IsAlive ? 100 : - 100);
+            return fitness > 0 ? fitness : 1;
         }
 
         public class AgentComparer : IEqualityComparer<BasePopulation>
@@ -254,12 +266,19 @@ namespace Population
 
         public string GetBrainAsBits()
         {
-            return _network.ConvertNetworkToBitString();
+            //return _network.ConvertNetworkToBitString();
+            return _network.ConvertNetworkToBitStringHiddenLayerOrder();
         }
 
         public void InsertNewBrainAsBits(string bits)
         {
-            _network.ConvertBitStringToNetwork(bits);
+            //_network.ConvertBitStringToNetwork(bits);
+            _network.ConvertBitStringToNetworkHiddenLayerOrder(bits);
+        }
+
+        public int GetHiddenNeurons()
+        {
+            return _network.HiddenNodes;
         }
     }
 }

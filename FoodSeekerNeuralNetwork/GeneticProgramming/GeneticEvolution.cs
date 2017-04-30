@@ -20,7 +20,7 @@ namespace GeneticProgramming
 
         public string Reproduce(string parent0, string parent1)
         {
-            string offspring = Crossover(parent0, parent1);
+            string offspring = Crossover(parent0, parent1, true);
             return Mutate(offspring);
         }
 
@@ -49,11 +49,36 @@ namespace GeneticProgramming
             return output;
         }
 
-        string Crossover(string parent0, string parent1)
+        string Crossover(string parent0, string parent1, bool allowDifferentLength)
         {
+            if(parent0.Length != parent1.Length && allowDifferentLength)
+            {
+                if(allowDifferentLength)
+                    CrossoverDifferentSize(ref parent0, ref parent1);
+                else
+                    throw new Exception("Different length crossover is not allowed");
+            }
+
             int crossoverPivot = (int)(_random.NextDouble() * parent0.Length);
 
             return parent0.Substring(0, crossoverPivot) + parent1.Substring(crossoverPivot);
+        }
+
+        void CrossoverDifferentSize(ref string parent0, ref string parent1)
+        {
+            string smaller = parent0.Length > parent1.Length ? parent0 : parent1;
+            string bigger = parent0.Length < parent1.Length ? parent0 : parent1;
+
+            if(_random.Next() % 2 == 0)
+            {//append it
+                smaller = smaller + bigger.Substring(smaller.Length);
+            }
+            else
+            {//cut it
+                bigger = bigger.Substring(0, smaller.Length);
+            }
+            parent0 = smaller;
+            parent1 = bigger;
         }
 
         public int Roulette(double[] fitness)

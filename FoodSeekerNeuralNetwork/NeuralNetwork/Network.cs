@@ -224,5 +224,52 @@ namespace NeuralNetwork
                 }
             }
         }
+
+        public string ConvertNetworkToBitStringHiddenLayerOrder()
+        {
+            string bits = string.Empty;
+
+            for (int j = 0; j < InputLayer.Weights.Lines; j++)
+            {
+                for (int i = 0; i < InputLayer.Weights.Columns; i++)
+                {
+                    int value = (int)(((InputLayer.Weights.TheMatrix[j, i] + 1) / 2) * 1000);
+                    int scaledDownTo256Bit = (int)(value * 255.0 / 999.0);
+                    bits += Functions.ToBin(scaledDownTo256Bit, 8);
+                }
+
+                for (int l = 0; l < HiddenLayer.Weights.Lines; l++)
+                {
+                    int value = (int)(((HiddenLayer.Weights.TheMatrix[l, j] + 1) / 2) * 1000);
+                    int scaledDownTo256Bit = (int)(value * 255.0 / 999.0);
+                    bits += Functions.ToBin(scaledDownTo256Bit, 8);
+                }
+            }
+
+            return bits;
+        }
+
+        public void ConvertBitStringToNetworkHiddenLayerOrder(string bits)
+        {
+            int index = 0;
+            for (int j = 0; j < InputLayer.Weights.Lines; j++)
+            {
+                for (int i = 0; i < InputLayer.Weights.Columns; i++)
+                {
+                    int scaledDownTo256Bit = index < bits.Length ? Convert.ToInt32(bits.Substring(index, 8), 2) : 0;
+                    double value = (scaledDownTo256Bit * 999 / 255.0 / 1000.0 * 2 - 1);
+                    InputLayer.Weights.TheMatrix[j, i] = value;
+                    index += 8;
+                }
+
+                for (int l = 0; l < HiddenLayer.Weights.Lines; l++)
+                {
+                    int scaledDownTo256Bit = index < bits.Length ? Convert.ToInt32(bits.Substring(index, 8), 2) : 0;
+                    double value = (scaledDownTo256Bit * 999 / 255.0 / 1000.0 * 2 - 1);
+                    HiddenLayer.Weights.TheMatrix[l, j] = value;
+                    index += 8;
+                }
+            }
+        }
     }
 }

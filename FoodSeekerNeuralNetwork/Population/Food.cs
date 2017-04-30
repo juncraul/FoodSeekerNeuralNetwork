@@ -9,9 +9,9 @@ namespace Population
     {
         public double FoodValue { get; set; }
 
-        public Food(Vector2 position, string specieType, Color color)
+        public Food(Vector2 position, string specieType, Color color, int foodValue)
         {
-            FoodValue = 100;
+            FoodValue = foodValue;
             Position = position;
             Radius = 5;
             Color = color;
