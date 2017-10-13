@@ -10,13 +10,21 @@ namespace Population
         public Vector2 Position { get; set; }
         public double Radius { get; set; }
         public Color Color { get; set; }
-        public string SpecieType { get; set; }
+        public SpecieType Type { get; set; }
         public bool IsAlive { get; set; }
 
         public BasePopulation()
         {
             IsAlive = true;
         }
+
+    }
+
+    public enum SpecieType
+    {
+        Plant,
+        Herbivore,
+        Carnivore
     }
 
     public class BaseComparer : IEqualityComparer<BasePopulation>

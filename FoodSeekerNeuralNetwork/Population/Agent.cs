@@ -22,7 +22,7 @@ namespace Population
 
         public int BadFoodAte { get; set; }
 
-        public readonly List<string> EatsOtherSpecies;
+        public readonly List<SpecieType> EatsOtherSpecies;
 
         private readonly int _eyesCount;
         private Network _network;
@@ -43,7 +43,7 @@ namespace Population
         private Food _closestFood;
 
 
-        public Agent(Vector2 position, int eyesCount, int hiddenNeurons, string specieType, Color color, List<string> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
+        public Agent(Vector2 position, int eyesCount, int hiddenNeurons, SpecieType agentType, Color color, List<SpecieType> eatsOtherSpecies, Random rand, AgentSettings agentSettings = AgentSettings.None)
         {
             _maxEnergy = 100;
             Energy = 100;
@@ -61,7 +61,7 @@ namespace Population
             _network = new Network();
             _network.InitializeNetwork(_eyesCount * 2 + 1, hiddenNeurons, 1, 0.3f, rand);
             //_network.InitializeNetwork(_eyesCount + 1, hiddenNeurons, 1, 0.3f, rand);
-            SpecieType = specieType;
+            Type = agentType;
             EatsOtherSpecies = eatsOtherSpecies;
             _agentSettings = agentSettings;
         }
@@ -161,7 +161,7 @@ namespace Population
         {
             for(int i = food.Count - 1; i >= 0; i --)
             {
-                if (!EatsOtherSpecies.Contains(food[i].SpecieType))
+                if (!EatsOtherSpecies.Contains(food[i].Type))
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, food[i].Position, food[i].Radius))
                 {
@@ -183,12 +183,12 @@ namespace Population
             {
                 if (agents[i] == this)
                     continue;
-                if (!EatsOtherSpecies.Contains(agents[i].SpecieType))
+                if (!EatsOtherSpecies.Contains(agents[i].Type))
                     continue;
                 if (Functions.CirclesCollision(Position, Radius, agents[i].Position, agents[i].Radius))
                 {
                     GoodFoodAte++;
-                    Energy += agents[i].Energy / 2;
+                    Energy += agents[i]._maxEnergy / 2;
                     agents[i].IsAlive = false;
                 }
             }
