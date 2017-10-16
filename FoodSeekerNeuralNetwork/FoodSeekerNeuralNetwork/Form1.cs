@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using Mathematics;
 
 namespace FoodSeekerNeuralNetwork
 {
@@ -22,6 +23,10 @@ namespace FoodSeekerNeuralNetwork
         System.Windows.Forms.Timer timerForDrawing;
         System.Windows.Forms.Timer timerForLogic;
         ApplicationEngine applicationEngine;
+        Point mouseDownPosition;
+        bool mouseIsDown;
+        Vector2 currentOffSet = new Vector2(0, 0);
+        Vector2 permanentOffSet = new Vector2(0, 0);
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -55,7 +60,7 @@ namespace FoodSeekerNeuralNetwork
             lock (thisLock)
             {
                 applicationEngine.DoLogic();
-                pictureBoxWorld.Image = applicationEngine.DrawWorld();
+                pictureBoxWorld.Image = applicationEngine.DrawWorld(permanentOffSet + currentOffSet);
                 pictureBoxBrainView.Image = applicationEngine.DrawBrain();
                 pictureBoxGraph.Image = applicationEngine.DrawGraph();
                 // re-enable the timer
@@ -71,12 +76,29 @@ namespace FoodSeekerNeuralNetwork
             }
         }
 
+        static volatile object secondLock = new object();
+
         private void DoStuff()
         {
             applicationEngine.DoLogic();
-            pictureBoxWorld.Image = applicationEngine.DrawWorld();
-            pictureBoxBrainView.Image = applicationEngine.DrawBrain();
-            pictureBoxGraph.Image = applicationEngine.DrawGraph();
+
+            //ThreadStart processTaskThread = delegate { Draw(); };
+            //Thread newThread = new Thread(processTaskThread);
+            //
+            //lock(secondLock)
+            //{
+            //
+            //    newThread.Start();
+            //}
+            //
+            //
+            //void Draw()
+            {
+                pictureBoxWorld.Image = applicationEngine.DrawWorld(permanentOffSet + currentOffSet);
+                pictureBoxBrainView.Image = applicationEngine.DrawBrain();
+                pictureBoxGraph.Image = applicationEngine.DrawGraph();
+
+            }
         }
 
         private void TimerForDrawing_Tick(object sender, EventArgs e)
@@ -88,12 +110,11 @@ namespace FoodSeekerNeuralNetwork
 
         private void pictureBoxWorld_Click(object sender, EventArgs e)
         {
-            var mouseEventArgs = e as MouseEventArgs;
-            if (mouseEventArgs != null)
+            if (e is MouseEventArgs mouseEventArgs)
             {
                 applicationEngine.SelectAgent(new Point(mouseEventArgs.X, pictureBoxWorld.Height - mouseEventArgs.Y));
             }
-            
+
         }
 
         private void trackBarSpeed_Scroll(object sender, EventArgs e)
@@ -116,6 +137,26 @@ namespace FoodSeekerNeuralNetwork
         private void buttonNextFrame_Click(object sender, EventArgs e)
         {
             DoStuff();
+        }
+
+        private void pictureBoxWorld_MouseDown(object sender, MouseEventArgs e)
+        {
+            mouseDownPosition = e.Location;
+            currentOffSet = new Vector2(0, 0);
+            mouseIsDown = true;
+        }
+
+        private void pictureBoxWorld_MouseUp(object sender, MouseEventArgs e)
+        {
+            permanentOffSet += currentOffSet;
+            currentOffSet = new Vector2(0, 0);
+            mouseIsDown = false;
+        }
+
+        private void pictureBoxWorld_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(mouseIsDown)
+                currentOffSet = new Vector2(e.X - mouseDownPosition.X, mouseDownPosition.Y - e.Y);
         }
     }
 }

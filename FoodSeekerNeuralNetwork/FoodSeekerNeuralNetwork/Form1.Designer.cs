@@ -50,6 +50,9 @@
             this.pictureBoxWorld.TabIndex = 0;
             this.pictureBoxWorld.TabStop = false;
             this.pictureBoxWorld.Click += new System.EventHandler(this.pictureBoxWorld_Click);
+            this.pictureBoxWorld.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxWorld_MouseDown);
+            this.pictureBoxWorld.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBoxWorld_MouseMove);
+            this.pictureBoxWorld.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBoxWorld_MouseUp);
             // 
             // pictureBoxBrainView
             // 

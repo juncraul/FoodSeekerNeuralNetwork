@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GeneticProgramming;
+using Environment;
 
 namespace FoodSeekerNeuralNetwork
 {
@@ -29,6 +30,7 @@ namespace FoodSeekerNeuralNetwork
         DateTime timeWhenApplicationStarted;
         DateTime lastTimeFoodWasGenerated;
 
+        Map map;
         
         int numberOfEyes = 16;
         Color colorZero = Color.GreenYellow;
@@ -41,6 +43,7 @@ namespace FoodSeekerNeuralNetwork
         int ticksIntoGeneration;
         double fitnessThisGenerationPrey;
         double fitnessThisGenerationPredator;
+
 
         private ApplicationEngine(Size worldCanvasSize, Size brainCanvasSize, Size graphCanvasSize)
         {
@@ -87,6 +90,8 @@ namespace FoodSeekerNeuralNetwork
             }
             
             evolutionGraph = new Graph(200, 500, 2, _agentsColor);
+
+            map = new Map(ApplicationSettings.MapSize, ApplicationSettings.CellSize, ApplicationSettings.Random);
         }
 
         public static ApplicationEngine GetInstance(Size worldCanvasSize, Size brainCanvasSize, Size graphCanvasSize)
@@ -94,21 +99,23 @@ namespace FoodSeekerNeuralNetwork
             return _applicationEngineInstance = (_applicationEngineInstance ?? new ApplicationEngine(worldCanvasSize, brainCanvasSize, graphCanvasSize));
         }
 
-        public Bitmap DrawWorld()
+        public Bitmap DrawWorld(Vector2 offSet)
         {
             SolidBrush brush = new SolidBrush(Color.White);
             graphicsWorld.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
+            map.Draw(graphicsWorld, bitmapWorld, offSet);
+
             foreach (Food f in food)
             {
-                f.Draw(graphicsWorld, bitmapWorld);
+                f.Draw(graphicsWorld, bitmapWorld, offSet);
             }
             foreach (Food f in badFood)
             {
-                f.Draw(graphicsWorld, bitmapWorld);
+                f.Draw(graphicsWorld, bitmapWorld, offSet);
             }
             foreach (Agent a in agents)
             {
-                a.DrawAgent(graphicsWorld, bitmapWorld);
+                a.DrawAgent(graphicsWorld, bitmapWorld, offSet);
             }
 
             return bitmapWorld;

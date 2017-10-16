@@ -18,10 +18,12 @@ namespace Population
             Type = specieType;
         }
 
-        public void Draw(Graphics graphics, Bitmap bitmap)
+        public void Draw(Graphics graphics, Bitmap bitmap, Vector2 offSet = null)
         {
+            if (offSet == null) offSet = new Vector2(0, 0);
             SolidBrush brush = new SolidBrush(Color);
-            graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
+            graphics.FillEllipse(brush, 
+                new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
         }
 
         public class FoodComparer : IEqualityComparer<BasePopulation>

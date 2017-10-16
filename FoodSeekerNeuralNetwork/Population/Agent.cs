@@ -196,23 +196,24 @@ namespace Population
                 Energy = _maxEnergy;
         }
 
-        public void DrawAgent(Graphics graphics, Bitmap bitmap)
+        public void DrawAgent(Graphics graphics, Bitmap bitmap, Vector2 offSet = null)
         {
+            if (offSet == null) offSet = new Vector2(0, 0);
             SolidBrush brush = new SolidBrush(Color);
             Pen pen = new Pen(Color.Black);
             pen.Width = 2;
-            graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
-            graphics.DrawEllipse(pen, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
+            graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
+            graphics.DrawEllipse(pen, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
 
             if(IsSelected)
-                graphics.DrawRectangle(pen, new Rectangle((int)(Position.X - Radius), bitmap.Height - (int)(Position.Y + Radius), (int)Radius * 2, (int)Radius * 2));
+                graphics.DrawRectangle(pen, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
 
             pen.Width = 1;
             for (int i = 0; i < _eyesCount; i ++)
             {
                 pen.Color = _eyeSees[i] != null ? _eyeSees[i].Color : Color.Black;
                 Vector2 direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
-                graphics.DrawLine(pen, (int)Position.X, bitmap.Height - (int)Position.Y, (int)(Position + direction).X, bitmap.Height - (int)(Position + direction).Y);
+                graphics.DrawLine(pen, (int)(Position.X + offSet.X), bitmap.Height - (int)(Position.Y + offSet.Y), (int)((Position + direction).X + offSet.X), bitmap.Height - (int)((Position + direction).Y + offSet.Y));
             }
 
             string text = string.Empty;
@@ -226,7 +227,7 @@ namespace Population
             }
 
             brush.Color = Color.Black;
-            graphics.DrawString(text, new Font("Consolas", 8), brush, (int)Position.X + 20, (int)(bitmap.Height - Position.Y));
+            graphics.DrawString(text, new Font("Consolas", 8), brush, (int)(Position.X + offSet.X) + 20, (int)(bitmap.Height - (Position.Y + offSet.Y)));
         }
 
         public void DrawBrain(Graphics graphics, Bitmap bitmap)

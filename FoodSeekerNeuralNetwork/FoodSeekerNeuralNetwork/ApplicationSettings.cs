@@ -14,7 +14,9 @@ namespace FoodSeekerNeuralNetwork
         public static double ScoreForEatingBadFood = -150;
         public static double ScoreForExisting = 10;
         public static Size SpawningSpace = new Size(724, 581);
-        public static int NumberOfAgentsTypeOne = (int)((SpawningSpace.Width + SpawningSpace.Height) / 100);
+        public static Size MapSize = new Size(50, 50);
+        public static SizeF CellSize = new SizeF((float)SpawningSpace.Width / MapSize.Width, (float)SpawningSpace.Height/MapSize.Height);
+        public static int NumberOfAgentsTypeOne = ((SpawningSpace.Width + SpawningSpace.Height) / 100);
         public static AgentSettings AgentSettings = AgentSettings.ShowFoodAte | AgentSettings.ShowEnergy;
         public static int NumberOfAgentsTypeTwo = 0;
         public static int GenerateFoodMilliseconds = 500;
