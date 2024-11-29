@@ -13,16 +13,17 @@ namespace Mathematics
         public static bool RayIntersectsCricle(Vector2 rayOrigin, Vector2 rayDirection, Vector2 circleOrigin, double circleRadius, out double distance)
         {
             distance = -1;
-            Vector2 l = circleOrigin - rayOrigin;
-            double tca = Vector2.Dot(l, rayDirection.Normaize());
+            var l = circleOrigin - rayOrigin;
+            var tca = Vector2.Dot(l, rayDirection.Normalize());
             if (tca < 0)
                 return false;
-            double s = Math.Sqrt(Vector2.Dot(l, l) - tca * tca);
+
+            var s = Math.Sqrt(Vector2.Dot(l, l) - tca * tca);
             if (s > circleRadius) return false;
-            double thc = Math.Sqrt(Math.Pow(circleRadius, 2) - Math.Pow(s, 2));
+            var thc = Math.Sqrt(Math.Pow(circleRadius, 2) - Math.Pow(s, 2));
             distance = tca - thc < tca + thc ? tca - thc : tca + thc;
-            Vector2 intersectionPosition = rayOrigin + rayDirection * distance; //maybe used later
-            Vector2 normal = (intersectionPosition - circleOrigin).Normaize();      //maybe used later
+            var intersectionPosition = rayOrigin + rayDirection * distance; //maybe used later
+            var normal = (intersectionPosition - circleOrigin).Normalize(); //maybe used later
             return s < circleRadius;
         }
 
@@ -48,10 +49,10 @@ namespace Mathematics
 
         public static double AngleBetweenTwoPoints(Vector2 point0, Vector2 point1)
         {
-            Vector2 a = new Vector2(0, 0);
-            Vector2 b = point1 - point0;
+            var a = new Vector2(0, 0);
+            var b = point1 - point0;
 
-            double result = Math.Atan2(a.Y, a.X) - Math.Atan2(b.Y, b.X);
+            var result = Math.Atan2(a.Y, a.X) - Math.Atan2(b.Y, b.X);
             return 2 * Math.PI - (result < 0 ? result + 2 * Math.PI : result);
         }
     }

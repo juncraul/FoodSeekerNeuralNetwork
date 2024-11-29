@@ -4,15 +4,15 @@ using System;
 namespace Mathematics.Test
 {
     [TestClass]
-    public class Vector2_Test
+    public class Vector2Test
     {
         [TestMethod]
         public void Vector2Substraction_Test()
         {
-            Vector2 a = new Vector2(1, 2);
-            Vector2 b = new Vector2(3, 4);
+            var a = new Vector2(1, 2);
+            var b = new Vector2(3, 4);
 
-            Vector2 c = a - b;
+            var c = a - b;
 
             Assert.AreEqual(c.X, -2);
             Assert.AreEqual(c.Y, -2);
@@ -21,10 +21,10 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Addition_Test()
         {
-            Vector2 a = new Vector2(1, 2);
-            Vector2 b = new Vector2(3, 4);
+            var a = new Vector2(1, 2);
+            var b = new Vector2(3, 4);
 
-            Vector2 c = a + b;
+            var c = a + b;
 
             Assert.AreEqual(c.X, 4);
             Assert.AreEqual(c.Y, 6);
@@ -33,10 +33,10 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Multiplication1_Test()
         {
-            Vector2 a = new Vector2(1, 2);
+            var a = new Vector2(1, 2);
             float b = 3;
 
-            Vector2 c = a * b;
+            var c = a * b;
 
             Assert.AreEqual(c.X, 3);
             Assert.AreEqual(c.Y, 6);
@@ -45,10 +45,10 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Multiplication2_Test()
         {
-            Vector2 a = new Vector2(1, 2);
+            var a = new Vector2(1, 2);
             float b = 3;
 
-            Vector2 c = b * a;
+            var c = b * a;
 
             Assert.AreEqual(c.X, 3);
             Assert.AreEqual(c.Y, 6);
@@ -57,10 +57,10 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Dot_Test()
         {
-            Vector2 a = new Vector2(1, 2);
-            Vector2 b = new Vector2(3, 4);
+            var a = new Vector2(1, 2);
+            var b = new Vector2(3, 4);
 
-            double c = Vector2.Dot(a, b);
+            var c = Vector2.Dot(a, b);
 
             Assert.AreEqual(c, 11);
         }
@@ -68,9 +68,9 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Magnitude_Test()
         {
-            Vector2 a = new Vector2(1, 2);
+            var a = new Vector2(1, 2);
 
-            double c = a.Magnitude();
+            var c = a.Magnitude();
 
             Assert.AreEqual(c, Math.Sqrt(5));
         }
@@ -78,9 +78,9 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Normalize_Test()
         {
-            Vector2 a = new Vector2(2, 0);
+            var a = new Vector2(2, 0);
 
-            Vector2 c = a.Normaize();
+            var c = a.Normalize();
 
             Assert.AreEqual(c.X, 1);
             Assert.AreEqual(c.Y, 0);
@@ -89,13 +89,13 @@ namespace Mathematics.Test
         [TestMethod]
         public void Vector2Rotate_Test()
         {
-            Vector2 a = new Vector2(0, 1);
+            var a = new Vector2(0, 1);
 
-            Vector2 b = a.Rotate(Math.PI / 2);
-            Vector2 c = a.Rotate(Math.PI);
-            Vector2 d = a.Rotate(3 * Math.PI / 2);
-            Vector2 e = a.Rotate(2 * Math.PI);
-            Vector2 f = a.Rotate(0);
+            var b = a.Rotate(Math.PI / 2);
+            var c = a.Rotate(Math.PI);
+            var d = a.Rotate(3 * Math.PI / 2);
+            var e = a.Rotate(2 * Math.PI);
+            var f = a.Rotate(0);
 
             Assert.IsTrue(Math.Abs(b.X - -1) <= 0.00001f);
             Assert.IsTrue(Math.Abs(b.Y - 0) <= 0.00001f);

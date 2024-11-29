@@ -21,7 +21,7 @@ namespace Population
         public void Draw(Graphics graphics, Bitmap bitmap, Vector2 offSet = null)
         {
             if (offSet == null) offSet = new Vector2(0, 0);
-            SolidBrush brush = new SolidBrush(Color);
+            var brush = new SolidBrush(Color);
             graphics.FillEllipse(brush, 
                 new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
         }
@@ -38,12 +38,12 @@ namespace Population
             public int GetHashCode(BasePopulation obj)
             {
                 //Get hash code for the Name field if it is not null. 
-                int hashPosition = obj.Position == null ? 0 : obj.Position.GetHashCode();
+                var hashPosition = obj.Position == null ? 0 : obj.Position.GetHashCode();
 
                 //Get hash code for the Code field. 
-                int hashRadius = obj.Radius.GetHashCode();
+                var hashRadius = obj.Radius.GetHashCode();
 
-                int hashColor = obj.Color.GetHashCode();
+                var hashColor = obj.Color.GetHashCode();
 
                 //Calculate the hash code for the product. 
                 return hashPosition ^ hashRadius ^ hashColor;

@@ -4,15 +4,14 @@ using System;
 namespace Mathematics.Test
 {
     [TestClass]
-    public class Functions_Test
+    public class FunctionsTest
     {
         [TestMethod]
         public void Sigmoid_Test()
         {
-            double result;
             for (double x = -10; x < 10; x++)
             {
-                result = Functions.Sigmoid(x);
+                var result = Functions.Sigmoid(x);
 
                 Assert.IsTrue(result >= -1 && result <= 1);
             }
@@ -31,7 +30,7 @@ namespace Mathematics.Test
         public void CirclesCollisionThrowsNullReferenceException295()
         {
             bool b;
-            Vector2 s0 = new Vector2(0, 0);
+            var s0 = new Vector2(0, 0);
             b = Functions.CirclesCollision(s0, 0, (Vector2)null, 0);
         }
 
@@ -39,9 +38,9 @@ namespace Mathematics.Test
         public void CirclesCollision442()
         {
             bool b;
-            Vector2 s0 = new Vector2(2, 2);
-            Vector2 s1 = new Vector2(4, 2);
-            Vector2 s2 = new Vector2(4, 3);
+            var s0 = new Vector2(2, 2);
+            var s1 = new Vector2(4, 2);
+            var s2 = new Vector2(4, 3);
             b = Functions.CirclesCollision(s0, 1, s1, 1);
             Assert.AreEqual<bool>(true, b);
             b = Functions.CirclesCollision(s1, 1, s2, 1);
@@ -63,7 +62,7 @@ namespace Mathematics.Test
         public void CollisionPointCircleThrowsNullReferenceException466()
         {
             bool b;
-            Vector2 s0 = new Vector2(0, 0);
+            var s0 = new Vector2(0, 0);
             b = Functions.CollisionPointCircle(s0, (Vector2)null, 0);
         }
 
@@ -71,10 +70,10 @@ namespace Mathematics.Test
         public void CollisionPointCircle186()
         {
             bool b;
-            Vector2 p0 = new Vector2(0, 0);
-            Vector2 p1 = new Vector2(2, 2);
-            Vector2 p2 = new Vector2(1, 2);
-            Vector2 s0 = new Vector2(2, 2);
+            var p0 = new Vector2(0, 0);
+            var p1 = new Vector2(2, 2);
+            var p2 = new Vector2(1, 2);
+            var s0 = new Vector2(2, 2);
             b = Functions.CollisionPointCircle(p0, s0, 1);
             Assert.AreEqual<bool>(false, b);
             b = Functions.CollisionPointCircle(p1, s0, 1);
@@ -86,15 +85,15 @@ namespace Mathematics.Test
         [TestMethod]
         public void AngleBetweenTwoPoints()
         {
-            Vector2 p0 = new Vector2(0, 0);
-            Vector2 p1 = new Vector2(1, 0);
-            Vector2 p2 = new Vector2(1, 1);
-            Vector2 p3 = new Vector2(0, 1);
-            Vector2 p4 = new Vector2(-1, 1);
-            Vector2 p5 = new Vector2(-1, 0);
-            Vector2 p6 = new Vector2(-1, -1);
-            Vector2 p7 = new Vector2(0, -1);
-            Vector2 p8 = new Vector2(1, -1);
+            var p0 = new Vector2(0, 0);
+            var p1 = new Vector2(1, 0);
+            var p2 = new Vector2(1, 1);
+            var p3 = new Vector2(0, 1);
+            var p4 = new Vector2(-1, 1);
+            var p5 = new Vector2(-1, 0);
+            var p6 = new Vector2(-1, -1);
+            var p7 = new Vector2(0, -1);
+            var p8 = new Vector2(1, -1);
 
             double x;
             x = Functions.AngleBetweenTwoPoints(p0, p1);

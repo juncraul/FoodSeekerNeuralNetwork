@@ -96,7 +96,7 @@ namespace FoodSeekerNeuralNetworkWithGenerations
         private void trackBarSpeed_Scroll(object sender, EventArgs e)
         {
             timerForLogic.Interval = 1 + trackBarSpeed.Value * 2;
-            int value = trackBarSpeed.Value;
+            var value = trackBarSpeed.Value;
             labelSpeed.Text = "Tick every " + timerForLogic.Interval + " milliseconds";
         }
 

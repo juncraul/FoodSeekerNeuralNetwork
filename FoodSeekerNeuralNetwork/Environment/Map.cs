@@ -1,12 +1,6 @@
-﻿
-using Mathematics;
+﻿using Mathematics;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace Environment
 {
@@ -15,7 +9,6 @@ namespace Environment
         public int Food { get; set; }
         public bool IsLand { get; set; }
     }
-
 
     public class Map
     {
@@ -36,15 +29,16 @@ namespace Environment
         {
             _map = new Cell[_mapSize.Width, _mapSize.Height];
 
-            for (int i = 0; i < _mapSize.Width; i++)
+            for (var i = 0; i < _mapSize.Width; i++)
             {
-                for (int j = 0; j < _mapSize.Height; j++)
+                for (var j = 0; j < _mapSize.Height; j++)
                 {
                     _map[i, j] = new Cell()
                     {
                         IsLand = false
                     };
-                    if (_random.NextDouble() < _landChance) 
+
+                    if (_random.NextDouble() < _landChance)
                         GenerateLand(i, j, _landExtension);
                 }
             }
@@ -63,32 +57,31 @@ namespace Environment
             }
         }
 
-        object lockObject = new object();
+        object _lockObject = new object();
 
         public void Draw(Graphics graphics, Bitmap bitmap, Vector2 offSet = null)
         {
             if (offSet == null) offSet = new Vector2(0, 0);
-            SolidBrush brushLand = new SolidBrush(Color.White);
-            SolidBrush brushNotLand = new SolidBrush(Color.Black);
+            var brushLand = new SolidBrush(Color.White);
+            var brushNotLand = new SolidBrush(Color.Black);
 
             //Graphics gr = Graphics.FromImage(bitmap);
             //ThreadStart processTaskThread = delegate { DrawInThread(gr); };
             //Thread newThread = new Thread(processTaskThread);
             //newThread.Start();
 
-
             //void DrawInThread(Graphics g)
             //{
             //    lock(lockObject)
             //    {
-                    for (int i = 0; i < _mapSize.Width; i++)
-                    {
-                        for (int j = 0; j < _mapSize.Height; j++)
-                        {
-                                graphics.FillRectangle(_map[i, j].IsLand ? brushLand : brushNotLand,
-                                new RectangleF(i * _cellSize.Width + (int)offSet.X, j * _cellSize.Height - (int)offSet.Y, _cellSize.Width, _cellSize.Height));
-                        }
-                    }
+            for (var i = 0; i < _mapSize.Width; i++)
+            {
+                for (var j = 0; j < _mapSize.Height; j++)
+                {
+                    graphics.FillRectangle(_map[i, j].IsLand ? brushLand : brushNotLand,
+                                           new RectangleF(i * _cellSize.Width + (int) offSet.X, j * _cellSize.Height - (int) offSet.Y, _cellSize.Width, _cellSize.Height));
+                }
+            }
             //    }
             //}
         }

@@ -1,11 +1,11 @@
-﻿using Mathematics;
+﻿using Environment;
+using GeneticProgramming;
+using Mathematics;
 using Population;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GeneticProgramming;
-using Environment;
 
 namespace FoodSeekerNeuralNetwork
 {
@@ -21,7 +21,7 @@ namespace FoodSeekerNeuralNetwork
 
         Bitmap bitmapBrain;
         Graphics graphicsBrain;
-        
+
         Bitmap bitmapGraph;
         Graphics graphicsGraph;
 
@@ -31,7 +31,7 @@ namespace FoodSeekerNeuralNetwork
         DateTime lastTimeFoodWasGenerated;
 
         Map map;
-        
+
         int numberOfEyes = 16;
         Color colorZero = Color.GreenYellow;
         List<SpecieType> typeOneEats = new List<SpecieType>();
@@ -44,7 +44,6 @@ namespace FoodSeekerNeuralNetwork
         double fitnessThisGenerationPrey;
         double fitnessThisGenerationPredator;
 
-
         private ApplicationEngine(Size worldCanvasSize, Size brainCanvasSize, Size graphCanvasSize)
         {
             ticksIntoGeneration = 0;
@@ -55,7 +54,7 @@ namespace FoodSeekerNeuralNetwork
             agents = new List<Agent>();
             food = new List<Food>();
             badFood = new List<Food>();
-             bitmapWorld = new Bitmap(worldCanvasSize.Width, worldCanvasSize.Height);
+            bitmapWorld = new Bitmap(worldCanvasSize.Width, worldCanvasSize.Height);
             graphicsWorld = Graphics.FromImage(bitmapWorld);
 
             bitmapBrain = new Bitmap(brainCanvasSize.Width, brainCanvasSize.Height);
@@ -63,32 +62,32 @@ namespace FoodSeekerNeuralNetwork
 
             bitmapGraph = new Bitmap(graphCanvasSize.Width, graphCanvasSize.Height);
             graphicsGraph = Graphics.FromImage(bitmapGraph);
-            
+
             typeOneEats.Add(SpecieType.Plant);
             typeTwoEats.Add(SpecieType.Herbivore);
             _agentsColor.Add(Color.Red);
             _agentsColor.Add(Color.Blue);
 
-            for (int i = 0; i < ApplicationSettings.NumberOfAgentsTypeOne; i++)
+            for (var i = 0; i < ApplicationSettings.NumberOfAgentsTypeOne; i++)
             {
                 GenerateAgent(SpecieType.Herbivore, false);
             }
 
-            for (int i = 0; i < ApplicationSettings.NumberOfAgentsTypeTwo; i++)
+            for (var i = 0; i < ApplicationSettings.NumberOfAgentsTypeTwo; i++)
             {
                 GenerateAgent(SpecieType.Carnivore, false);
             }
 
-            for (int i = 0; i < ApplicationSettings.FoodOnScreen; i++)
+            for (var i = 0; i < ApplicationSettings.FoodOnScreen; i++)
             {
                 GenerateFood();
             }
 
-            for (int i = 0; i < ApplicationSettings.BadFoodOnScreen; i++)
+            for (var i = 0; i < ApplicationSettings.BadFoodOnScreen; i++)
             {
                 GenerateBadFood();
             }
-            
+
             evolutionGraph = new Graph(200, 500, 2, _agentsColor);
 
             map = new Map(ApplicationSettings.MapSize, ApplicationSettings.CellSize, ApplicationSettings.Random);
@@ -101,19 +100,21 @@ namespace FoodSeekerNeuralNetwork
 
         public Bitmap DrawWorld(Vector2 offSet)
         {
-            SolidBrush brush = new SolidBrush(Color.White);
+            var brush = new SolidBrush(Color.White);
             graphicsWorld.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
             map.Draw(graphicsWorld, bitmapWorld, offSet);
 
-            foreach (Food f in food)
+            foreach (var f in food)
             {
                 f.Draw(graphicsWorld, bitmapWorld, offSet);
             }
-            foreach (Food f in badFood)
+
+            foreach (var f in badFood)
             {
                 f.Draw(graphicsWorld, bitmapWorld, offSet);
             }
-            foreach (Agent a in agents)
+
+            foreach (var a in agents)
             {
                 a.DrawAgent(graphicsWorld, bitmapWorld, offSet);
             }
@@ -123,11 +124,12 @@ namespace FoodSeekerNeuralNetwork
 
         public Bitmap DrawBrain()
         {
-            SolidBrush brush = new SolidBrush(Color.White);
+            var brush = new SolidBrush(Color.White);
             graphicsBrain.FillRectangle(brush, new Rectangle(0, 0, bitmapWorld.Width, bitmapWorld.Height));
-            Agent agent = agents.Where(a =>a.IsSelected).FirstOrDefault();
+            var agent = agents.Where(a => a.IsSelected).FirstOrDefault();
             if (agent == null)
                 agent = agents.FirstOrDefault();
+
             agent.DrawBrain(graphicsBrain, bitmapBrain);
 
             return bitmapBrain;
@@ -135,9 +137,9 @@ namespace FoodSeekerNeuralNetwork
 
         public Bitmap DrawGraph()
         {
-            SolidBrush brush = new SolidBrush(Color.White);
+            var brush = new SolidBrush(Color.White);
             graphicsGraph.FillRectangle(brush, new Rectangle(0, 0, bitmapGraph.Width, bitmapGraph.Height));
-            
+
             evolutionGraph.Draw(graphicsGraph, bitmapGraph);
 
             return bitmapGraph;
@@ -157,14 +159,15 @@ namespace FoodSeekerNeuralNetwork
                 fitnessThisGenerationPredator = 0;
             }
 
-            List<BasePopulation> allPopulation = agents.Cast<BasePopulation>()
-                                                    .Union(food.Cast<BasePopulation>())
-                                                    .Union(badFood.Cast<BasePopulation>()).ToList();
+            var allPopulation = agents.Cast<BasePopulation>()
+                                      .Union(food.Cast<BasePopulation>())
+                                      .Union(badFood.Cast<BasePopulation>()).ToList();
 
-            for (int i = agents.Count - 1; i >= 0; i--)
+            for (var i = agents.Count - 1; i >= 0; i--)
             {
                 if (!agents[i].IsAlive)
                     continue;
+
                 agents[i].CheckEyes(allPopulation);
                 agents[i].TrainTheAgent();
                 agents[i].AgentActivity();
@@ -175,12 +178,12 @@ namespace FoodSeekerNeuralNetwork
 
             ReplaceDeadPopulation();
 
-            for (int i = food.Count; i < ApplicationSettings.FoodOnScreen; i++)
+            for (var i = food.Count; i < ApplicationSettings.FoodOnScreen; i++)
             {
                 GenerateFood();
             }
 
-            for (int i = badFood.Count; i < ApplicationSettings.BadFoodOnScreen; i++)
+            for (var i = badFood.Count; i < ApplicationSettings.BadFoodOnScreen; i++)
             {
                 GenerateBadFood();
             }
@@ -191,7 +194,7 @@ namespace FoodSeekerNeuralNetwork
             agents.RemoveAll(a => a.Energy <= 0 || !a.IsAlive);
             food.RemoveAll(f => !f.IsAlive);
 
-            for (int i = agents.Count; i < ApplicationSettings.NumberOfAgentsTypeOne + ApplicationSettings.NumberOfAgentsTypeTwo; i++)
+            for (var i = agents.Count; i < ApplicationSettings.NumberOfAgentsTypeOne + ApplicationSettings.NumberOfAgentsTypeTwo; i++)
             {
                 if (agents.Count(a => a.Type == SpecieType.Herbivore) != ApplicationSettings.NumberOfAgentsTypeOne)
                 {
@@ -215,46 +218,64 @@ namespace FoodSeekerNeuralNetwork
                     GenerateAgent(agentType, false);
                     return;
                 }
-                int indexParent0 = _geneticEvolution.Roulette(agents.Where(a => a.Type == agentType)
-                                                                    .Select(a=> a.GetFitness(ApplicationSettings.ScoreForEatingGoodFood, ApplicationSettings.ScoreForEatingBadFood, ApplicationSettings.ScoreForExisting)).ToArray());
-                int indexParent1 = _geneticEvolution.Roulette(agents.Where(a => a.Type == agentType)
-                                                                    .Select(a => a.GetFitness(ApplicationSettings.ScoreForEatingGoodFood, ApplicationSettings.ScoreForEatingBadFood, ApplicationSettings.ScoreForExisting)).ToArray());
-                string brainOfAgent0 = agents[indexParent0].GetBrainAsBits();
-                string brainOfAgent1 = agents[indexParent1].GetBrainAsBits();
 
-                string smaller = brainOfAgent0.Length > brainOfAgent1.Length ? brainOfAgent0 : brainOfAgent1;
-                string bigger = brainOfAgent0.Length < brainOfAgent1.Length ? brainOfAgent0 : brainOfAgent1;
+                var indexParent0 = _geneticEvolution.Roulette(agents.Where(a => a.Type == agentType)
+                                                                    .Select(a => a.GetFitness(ApplicationSettings.ScoreForEatingGoodFood, ApplicationSettings.ScoreForEatingBadFood, ApplicationSettings.ScoreForExisting)).ToArray());
+
+                var indexParent1 = _geneticEvolution.Roulette(agents.Where(a => a.Type == agentType)
+                                                                    .Select(a => a.GetFitness(ApplicationSettings.ScoreForEatingGoodFood, ApplicationSettings.ScoreForEatingBadFood, ApplicationSettings.ScoreForExisting)).ToArray());
+
+                var brainOfAgent0 = agents[indexParent0].GetBrainAsBits();
+                var brainOfAgent1 = agents[indexParent1].GetBrainAsBits();
+
+                var smaller = brainOfAgent0.Length > brainOfAgent1.Length ? brainOfAgent0 : brainOfAgent1;
+                var bigger = brainOfAgent0.Length < brainOfAgent1.Length ? brainOfAgent0 : brainOfAgent1;
 
                 int hiddenNeurons;
 
                 if (ApplicationSettings.Random.Next() % 2 == 0)
-                {//append it
+                {
+                    //append it
                     smaller = smaller + bigger.Substring(smaller.Length);
                     hiddenNeurons = brainOfAgent0.Length > brainOfAgent1.Length ? agents[indexParent0].GetHiddenNeurons() : agents[indexParent1].GetHiddenNeurons();
                 }
                 else
-                {//cut it
+                {
+                    //cut it
                     bigger = bigger.Substring(0, smaller.Length);
                     hiddenNeurons = brainOfAgent0.Length < brainOfAgent1.Length ? agents[indexParent0].GetHiddenNeurons() : agents[indexParent1].GetHiddenNeurons();
                 }
+
                 brainOfAgent0 = smaller;
                 brainOfAgent1 = bigger;
 
-                string networkAsBits = _geneticEvolution.Reproduce(brainOfAgent0, brainOfAgent1);
+                var networkAsBits = _geneticEvolution.Reproduce(brainOfAgent0, brainOfAgent1);
 
                 agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Width, ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Height),
-                                                numberOfEyes, hiddenNeurons, agentType, _agentsColor[(int)agentType], agentType == SpecieType.Herbivore ? typeOneEats : typeTwoEats, ApplicationSettings.Random, ApplicationSettings.AgentSettings);
+                                  numberOfEyes,
+                                  hiddenNeurons,
+                                  agentType,
+                                  _agentsColor[(int) agentType],
+                                  agentType == SpecieType.Herbivore ? typeOneEats : typeTwoEats,
+                                  ApplicationSettings.Random,
+                                  ApplicationSettings.AgentSettings);
 
                 agent.InsertNewBrainAsBits(networkAsBits);
             }
             else
             {
                 agent = new Agent(new Vector2(ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Width, ApplicationSettings.Random.Next() % ApplicationSettings.SpawningSpace.Height),
-                                                numberOfEyes, 5, agentType, _agentsColor[(int)agentType], agentType == SpecieType.Herbivore ? typeOneEats : typeTwoEats, ApplicationSettings.Random, ApplicationSettings.AgentSettings);
+                                  numberOfEyes,
+                                  5,
+                                  agentType,
+                                  _agentsColor[(int) agentType],
+                                  agentType == SpecieType.Herbivore ? typeOneEats : typeTwoEats,
+                                  ApplicationSettings.Random,
+                                  ApplicationSettings.AgentSettings);
             }
+
             agents.Add(agent);
         }
-
 
         public void GenerateFood()
         {
@@ -268,14 +289,14 @@ namespace FoodSeekerNeuralNetwork
 
         public void SelectAgent(Point p)
         {
-            foreach (Agent a in agents)
+            foreach (var a in agents)
             {
                 a.IsSelected = false;
             }
 
-            foreach (Agent a in agents)
+            foreach (var a in agents)
             {
-                if(Functions.CollisionPointCircle(new Vector2(p.X, p.Y), a.Position, a.Radius))
+                if (Functions.CollisionPointCircle(new Vector2(p.X, p.Y), a.Position, a.Radius))
                 {
                     a.IsSelected = true;
                     break;

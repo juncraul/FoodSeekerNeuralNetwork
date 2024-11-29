@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Population;
+using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Population;
 
 namespace FoodSeekerNeuralNetworkWithGenerations
 {
@@ -17,7 +13,7 @@ namespace FoodSeekerNeuralNetworkWithGenerations
         public static double ScoreForEatingGoodFood = 50;
         public static double ScoreForEatingBadFood = -150;
         public static double ScoreForExisting = 10;
-        public static Size SpawningSpace = new Size(724, 581);// new Size(800, 800);
+        public static Size SpawningSpace = new Size(724, 581); // new Size(800, 800);
         public static int NumberOfAgentsTypeOne = 15;
         public static int NumberOfAgentsTypeTwo = 0;
         public static AgentSettings AgentSettings = AgentSettings.ShowFoodAte | AgentSettings.ShowEnergy;

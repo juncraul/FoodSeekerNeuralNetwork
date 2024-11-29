@@ -1,38 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeneticProgramming
 {
     public class GeneticEvolution
     {
-        private Random _random;
-        private readonly float _mutation_rate = 0.007f;
+        private readonly Random _random;
+        private readonly float _mutationRate;// = 0.007f;
 
-        public GeneticEvolution(Random random, float mutation_rate, float crossover_rate)
+        public GeneticEvolution(Random random, float mutationRate, float crossoverRate)
         {
             _random = random;
-            _mutation_rate = mutation_rate;
+            _mutationRate = mutationRate;
             //_crossover_rate = crossover_rate;
         }
 
         public string Reproduce(string parent0, string parent1)
         {
-            string offspring = Crossover(parent0, parent1, true);
+            var offspring = Crossover(parent0, parent1, true);
             return Mutate(offspring);
         }
 
-        string Mutate(string bits)
+        private string Mutate(string bits)
         {
-            string output = "";
+            var output = "";
 
-            for (int i = 0; i < bits.Length; i++)
+            foreach (var bit in bits)
             {
-                if (_random.NextDouble() < _mutation_rate)
+                if (_random.NextDouble() < _mutationRate)
                 {
-                    if (bits[i] == '1')
+                    if (bit == '1')
 
                         output += "0";
 
@@ -42,56 +39,59 @@ namespace GeneticProgramming
                 }
                 else
                 {
-                    output += bits[i];
+                    output += bit;
                 }
             }
 
             return output;
         }
 
-        string Crossover(string parent0, string parent1, bool allowDifferentLength)
+        private string Crossover(string parent0, string parent1, bool allowDifferentLength)
         {
-            if(parent0.Length != parent1.Length && allowDifferentLength)
+            if (parent0.Length != parent1.Length && allowDifferentLength)
             {
-                if(allowDifferentLength)
+                if (allowDifferentLength)
                     CrossoverDifferentSize(ref parent0, ref parent1);
                 else
                     throw new Exception("Different length crossover is not allowed");
             }
 
-            int crossoverPivot = (int)(_random.NextDouble() * parent0.Length);
+            var crossoverPivot = (int) (_random.NextDouble() * parent0.Length);
 
             return parent0.Substring(0, crossoverPivot) + parent1.Substring(crossoverPivot);
         }
 
-        void CrossoverDifferentSize(ref string parent0, ref string parent1)
+        private void CrossoverDifferentSize(ref string parent0, ref string parent1)
         {
-            string smaller = parent0.Length > parent1.Length ? parent0 : parent1;
-            string bigger = parent0.Length < parent1.Length ? parent0 : parent1;
+            var smaller = parent0.Length > parent1.Length ? parent0 : parent1;
+            var bigger = parent0.Length < parent1.Length ? parent0 : parent1;
 
-            if(_random.Next() % 2 == 0)
-            {//append it
+            if (_random.Next() % 2 == 0)
+            {
+                //append it
                 smaller = smaller + bigger.Substring(smaller.Length);
             }
             else
-            {//cut it
+            {
+                //cut it
                 bigger = bigger.Substring(0, smaller.Length);
             }
+
             parent0 = smaller;
             parent1 = bigger;
         }
 
         public int Roulette(double[] fitness)
         {
-            double totalFitness = fitness.Sum(a=>a);
+            var totalFitness = fitness.Sum(a => a);
 
             //generate a random number between 0 & total fitness count
-            double slice = (float)(_random.NextDouble() * totalFitness);
+            double slice = (float) (_random.NextDouble() * totalFitness);
 
             //go through the chromosones adding up the fitness so far
             double fitnessSoFar = 0.0f;
 
-            for (int i = 0; i < fitness.Length; i++)
+            for (var i = 0; i < fitness.Length; i++)
             {
                 fitnessSoFar += fitness[i];
 
@@ -99,6 +99,7 @@ namespace GeneticProgramming
                 if (fitnessSoFar >= slice)
                     return i;
             }
+
             return -1;
         }
     }

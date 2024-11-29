@@ -70,14 +70,14 @@ namespace Population
         {
             double distance;
             double minDistance;
-            for(int i = 0; i < _eyesCount; i ++)
+            for(var i = 0; i < _eyesCount; i ++)
             {
                 minDistance = 1000000;
-                foreach (BasePopulation b in items)
+                foreach (var b in items)
                 {
                     if (b == this) continue;
                     if ((b as Agent) != null) continue;
-                    Vector2 direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
+                    var direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
                     if (Functions.RayIntersectsCricle(Position, direction, b.Position, b.Radius, out distance))
                     {
                         if(minDistance > distance)
@@ -95,7 +95,7 @@ namespace Population
             }
 
             minDistance = 1000000;
-            foreach(BasePopulation b in items)
+            foreach(var b in items)
             {
                 if (b == this) continue;
                 if ((b as Food) == null) continue;
@@ -110,9 +110,9 @@ namespace Population
 
         public void TrainTheAgent()
         {
-            Matrix sensorMatrix = new Matrix(_eyesCount * 2 + 1, 1);
+            var sensorMatrix = new Matrix(_eyesCount * 2 + 1, 1);
             //Matrix sensorMatrix = new Matrix(_eyesCount + 1, 1);
-            for (int i = 0; i < _eyesCount; i ++)
+            for (var i = 0; i < _eyesCount; i ++)
             {
                 if (_eyeSees[i] != null)
                 {
@@ -136,7 +136,7 @@ namespace Population
             //sensorMatrix.TheMatrix[_eyesCount, 0] = Energy / _maxEnergy;
 
             Matrix actualOutput;
-            actualOutput = _network.QueryNetwrok(sensorMatrix);
+            actualOutput = _network.QueryNetwork(sensorMatrix);
             previousSensorMatrix = sensorMatrix;
 
             _directionRadian += (actualOutput.TheMatrix[0, 0] * 2 - 1) * _rotationSpeed;
@@ -159,7 +159,7 @@ namespace Population
 
         public void CheckForFood(List<Food> food, List<Agent> agents)
         {
-            for(int i = food.Count - 1; i >= 0; i --)
+            for(var i = food.Count - 1; i >= 0; i --)
             {
                 if (!EatsOtherSpecies.Contains(food[i].Type))
                     continue;
@@ -179,7 +179,7 @@ namespace Population
                 }
             }
 
-            for (int i = agents.Count - 1; i >= 0; i--)
+            for (var i = agents.Count - 1; i >= 0; i--)
             {
                 if (agents[i] == this)
                     continue;
@@ -199,8 +199,8 @@ namespace Population
         public void DrawAgent(Graphics graphics, Bitmap bitmap, Vector2 offSet = null)
         {
             if (offSet == null) offSet = new Vector2(0, 0);
-            SolidBrush brush = new SolidBrush(Color);
-            Pen pen = new Pen(Color.Black);
+            var brush = new SolidBrush(Color);
+            var pen = new Pen(Color.Black);
             pen.Width = 2;
             graphics.FillEllipse(brush, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
             graphics.DrawEllipse(pen, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
@@ -209,14 +209,14 @@ namespace Population
                 graphics.DrawRectangle(pen, new Rectangle((int)(Position.X - Radius + offSet.X), bitmap.Height - (int)(Position.Y + Radius + offSet.Y), (int)Radius * 2, (int)Radius * 2));
 
             pen.Width = 1;
-            for (int i = 0; i < _eyesCount; i ++)
+            for (var i = 0; i < _eyesCount; i ++)
             {
                 pen.Color = _eyeSees[i] != null ? _eyeSees[i].Color : Color.Black;
-                Vector2 direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
+                var direction = (new Vector2(_eyeLength, 0).Rotate(_directionRadian - _eyesRadius / 2 + (i * _distanceBetweenEyes)));
                 graphics.DrawLine(pen, (int)(Position.X + offSet.X), bitmap.Height - (int)(Position.Y + offSet.Y), (int)((Position + direction).X + offSet.X), bitmap.Height - (int)((Position + direction).Y + offSet.Y));
             }
 
-            string text = string.Empty;
+            var text = string.Empty;
             if (_agentSettings.HasFlag(AgentSettings.ShowFoodAte))
             {
                 text = "Ate:" + GoodFoodAte + Environment.NewLine;
@@ -237,7 +237,7 @@ namespace Population
 
         public double GetFitness(double scoreForEatingGoodFood, double scoreForEatingBadFood, double scoreForExisting)
         {
-            double fitness = GoodFoodAte * scoreForEatingGoodFood + BadFoodAte * scoreForEatingBadFood + scoreForExisting + (IsAlive ? 100 : - 100);
+            var fitness = GoodFoodAte * scoreForEatingGoodFood + BadFoodAte * scoreForEatingBadFood + scoreForExisting + (IsAlive ? 100 : - 100);
             return fitness > 0 ? fitness : 1;
         }
 
@@ -253,12 +253,12 @@ namespace Population
             public int GetHashCode(BasePopulation obj)
             {
                 //Get hash code for the Name field if it is not null. 
-                int hashPosition = obj.Position == null ? 0 : obj.Position.GetHashCode();
+                var hashPosition = obj.Position == null ? 0 : obj.Position.GetHashCode();
 
                 //Get hash code for the Code field. 
-                int hashRadius = obj.Radius.GetHashCode();
+                var hashRadius = obj.Radius.GetHashCode();
 
-                int hashColor = obj.Color.GetHashCode();
+                var hashColor = obj.Color.GetHashCode();
 
                 //Calculate the hash code for the product. 
                 return hashPosition ^ hashRadius ^ hashColor;

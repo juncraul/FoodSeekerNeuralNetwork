@@ -43,23 +43,23 @@ namespace Mathematics
             return Math.Sqrt(X * X + Y * Y);
         }
 
-        public Vector2 Normaize()
+        public Vector2 Normalize()
         {
             return this * (1 / Magnitude());
         }
 
         public Vector2 Rotate(double radian)
         {
-            double cosA = Math.Cos(radian);
-            double sinA = Math.Sin(radian);
+            var cosA = Math.Cos(radian);
+            var sinA = Math.Sin(radian);
             return new Vector2(X * cosA - Y * sinA, X * sinA + Y * cosA);
         }
 
         public int GetHashCode(Vector2 obj)
         {
-            int hashX = obj.X.GetHashCode();
+            var hashX = obj.X.GetHashCode();
 
-            int hashY = obj.Y.GetHashCode();
+            var hashY = obj.Y.GetHashCode();
             
             return hashX ^ hashY;
         }

@@ -4,12 +4,12 @@ using System;
 namespace Mathematics.Test
 {
     [TestClass]
-    public class Matrix_Test
+    public class MatrixTest
     {
         [TestMethod]
         public void MatrixConstructor_Test()
         {
-            Matrix a = new Matrix(2, 3);
+            var a = new Matrix(2, 3);
 
             Assert.AreEqual(a.Lines, 2);
             Assert.AreEqual(a.Columns, 3);
@@ -19,8 +19,8 @@ namespace Mathematics.Test
         [TestMethod]
         public void MatrixMultiplication_Test()
         {
-            Matrix a = new Matrix(2, 3);
-            Matrix b = new Matrix(3, 2);
+            var a = new Matrix(2, 3);
+            var b = new Matrix(3, 2);
 
             a.TheMatrix[0, 0] = 1;
             a.TheMatrix[0, 1] = 2;
@@ -36,9 +36,9 @@ namespace Mathematics.Test
             b.TheMatrix[2, 0] = 11;
             b.TheMatrix[2, 1] = 12;
 
-            Matrix c = a * b;
-            Matrix d = 2 * a;
-            Matrix e = a * 2;
+            var c = a * b;
+            var d = 2 * a;
+            var e = a * 2;
 
             Assert.AreEqual(c.TheMatrix[0, 0], 58);
             Assert.AreEqual(c.TheMatrix[0, 1], 64);
@@ -63,8 +63,8 @@ namespace Mathematics.Test
         [TestMethod]
         public void MatrixAddition_Test()
         {
-            Matrix a = new Matrix(2, 2);
-            Matrix b = new Matrix(2, 2);
+            var a = new Matrix(2, 2);
+            var b = new Matrix(2, 2);
 
             a.TheMatrix[0, 0] = 1;
             a.TheMatrix[0, 1] = 2;
@@ -76,9 +76,9 @@ namespace Mathematics.Test
             b.TheMatrix[1, 0] = 7;
             b.TheMatrix[1, 1] = 8;
 
-            Matrix c = a + b;
-            Matrix d = 3 + a;
-            Matrix e = a + 3;
+            var c = a + b;
+            var d = 3 + a;
+            var e = a + 3;
 
             Assert.AreEqual(c.TheMatrix[0, 0], 6);
             Assert.AreEqual(c.TheMatrix[0, 1], 8);
@@ -99,8 +99,8 @@ namespace Mathematics.Test
         [TestMethod]
         public void MatrixSubstraction_Test()
         {
-            Matrix a = new Matrix(2, 2);
-            Matrix b = new Matrix(2, 2);
+            var a = new Matrix(2, 2);
+            var b = new Matrix(2, 2);
 
             a.TheMatrix[0, 0] = 1;
             a.TheMatrix[0, 1] = 2;
@@ -112,9 +112,9 @@ namespace Mathematics.Test
             b.TheMatrix[1, 0] = 7;
             b.TheMatrix[1, 1] = 8;
 
-            Matrix c = a - b;
-            Matrix d = 3 - a;
-            Matrix e = a - 3;
+            var c = a - b;
+            var d = 3 - a;
+            var e = a - 3;
 
             Assert.AreEqual(c.TheMatrix[0, 0], -4);
             Assert.AreEqual(c.TheMatrix[0, 1], -4);
@@ -135,7 +135,7 @@ namespace Mathematics.Test
         [TestMethod]
         public void MatrixTranspose_Test()
         {
-            Matrix a = new Matrix(2, 3);
+            var a = new Matrix(2, 3);
 
             a.TheMatrix[0, 0] = 1;
             a.TheMatrix[0, 1] = 2;
@@ -144,7 +144,7 @@ namespace Mathematics.Test
             a.TheMatrix[1, 1] = 5;
             a.TheMatrix[1, 2] = 6;
 
-            Matrix b = a.Transpose();
+            var b = a.Transpose();
 
             Assert.AreEqual(b.TheMatrix[0, 0], 1);
             Assert.AreEqual(b.TheMatrix[0, 1], 4);
@@ -157,7 +157,7 @@ namespace Mathematics.Test
         [TestMethod]
         public void GetMaxValueIndex_Test()
         {
-            Matrix a = new Matrix(6, 1);
+            var a = new Matrix(6, 1);
 
             a.TheMatrix[0, 0] = 1;
             a.TheMatrix[1, 0] = 2;
@@ -172,8 +172,8 @@ namespace Mathematics.Test
         [TestMethod]
         public void GenerateRandomValuesBetween_Test()
         {
-            Matrix a = new Matrix(2, 3);
-            Random random = new Random(0);
+            var a = new Matrix(2, 3);
+            var random = new Random(0);
 
             a.TheMatrix[0, 0] = 0;
             a.TheMatrix[0, 1] = 0;
